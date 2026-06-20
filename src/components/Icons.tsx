@@ -1,4 +1,4 @@
-// SVG 아이콘 컴포넌트 모음 - lucide-react 스타일
+import React from 'react';
 
 interface IconProps {
   size?: number;
