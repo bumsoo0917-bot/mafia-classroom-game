@@ -1,8 +1,10 @@
 import Link from 'next/link';
+import PageBackground from '@/components/PageBackground';
 
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      <PageBackground image="main-bg.png" overlay="dark" />
 
       {/* 배경 장식 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getRecommendedRoles } from '@/lib/gameLogic';
 import { TieRule } from '@/types/game';
+import PageBackground from '@/components/PageBackground';
 
 export default function CreateRoomPage() {
   const router = useRouter();
@@ -87,6 +88,7 @@ export default function CreateRoomPage() {
 
   return (
     <main className="min-h-screen p-6 md:p-10">
+      <PageBackground image="waiting-bg.png" overlay="darker" />
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-black text-white">게임 방 만들기</h1>

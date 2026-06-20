@@ -13,6 +13,7 @@ import {
 import { Room, Player, PublicPlayer, GameLog } from '@/types/game';
 import PhaseBanner from '@/components/PhaseBanner';
 import GameCodeDisplay from '@/components/GameCodeDisplay';
+import PageBackground, { getPhaseBackground } from '@/components/PageBackground';
 
 const roleLabels: Record<string, string> = {
   mafia: '🎭 마피아',
@@ -126,6 +127,10 @@ export default function TeacherRoomPage() {
 
   return (
     <main className="min-h-screen p-4 md:p-8">
+      <PageBackground
+        image={getPhaseBackground(room.currentPhase, room.winner)}
+        overlay={room.currentPhase === 'night' ? 'darker' : 'dark'}
+      />
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

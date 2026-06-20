@@ -8,6 +8,7 @@ import { Room, Player, PublicPlayer } from '@/types/game';
 import PhaseBanner from '@/components/PhaseBanner';
 import NarratorMessage from '@/components/NarratorMessage';
 import Timer from '@/components/Timer';
+import PageBackground, { getPhaseBackground } from '@/components/PageBackground';
 
 const roleInfo: Record<string, { label: string; emoji: string; colorClass: string; description: string }> = {
   mafia: {
@@ -168,6 +169,10 @@ export default function StudentRoomPage() {
 
   return (
     <main className="min-h-screen p-4 md:p-8 max-w-2xl mx-auto space-y-6">
+      <PageBackground
+        image={getPhaseBackground(room.currentPhase, room.winner)}
+        overlay={room.currentPhase === 'night' ? 'darker' : 'dark'}
+      />
       {/* Dead player banner */}
       {myPlayer && !isAlive && (
         <div className="bg-black/50 border border-white/20 rounded-2xl p-4 text-center">

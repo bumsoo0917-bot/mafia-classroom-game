@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import PageBackground from '@/components/PageBackground';
 
 export default function TeacherLoginPage() {
   const [adminCode, setAdminCode] = useState('');
@@ -35,6 +36,7 @@ export default function TeacherLoginPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-8">
+      <PageBackground image="main-bg.png" overlay="darker" />
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
           <div className="text-6xl mb-4">👩‍🏫</div>

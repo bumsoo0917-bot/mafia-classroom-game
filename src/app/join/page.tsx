@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebaseClient';
 import { signInAnonymously } from 'firebase/auth';
+import PageBackground from '@/components/PageBackground';
 
 export default function JoinPage() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function JoinPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-8">
+      <PageBackground image="waiting-bg.png" overlay="darker" />
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
           <div className="text-6xl mb-4">🎮</div>
