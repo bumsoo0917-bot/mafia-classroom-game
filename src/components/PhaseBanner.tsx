@@ -81,12 +81,15 @@ export default function PhaseBanner({ phase, dayNumber }: PhaseBannerProps) {
 
   return (
     <div
-      className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl border font-black text-xl backdrop-blur-md"
+      className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-md"
       style={{
         background: info.bg,
         borderColor: info.border,
         color: info.text,
         boxShadow: info.glow ?? 'none',
+        fontFamily: '"Black Han Sans", sans-serif',
+        fontSize: '1.25rem',
+        letterSpacing: '0.02em',
       }}
     >
       <span className="text-2xl">{info.emoji}</span>

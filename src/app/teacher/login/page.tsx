@@ -40,8 +40,8 @@ export default function TeacherLoginPage() {
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
           <div className="text-6xl mb-4">👩‍🏫</div>
-          <h1 className="text-4xl font-black text-white">교사 로그인</h1>
-          <p className="text-white/60 mt-2 text-lg">관리자 코드를 입력하세요</p>
+          <h1 className="text-4xl text-white" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>교사 로그인</h1>
+          <p className="text-white/50 mt-2 text-base">관리자 코드를 입력하세요</p>
         </div>
 
         <form onSubmit={handleSubmit} className="game-card space-y-6">

@@ -51,8 +51,8 @@ export default function JoinPage() {
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
           <div className="text-6xl mb-4">🎮</div>
-          <h1 className="text-4xl font-black text-white">게임 입장</h1>
-          <p className="text-white/60 mt-2 text-lg">게임 코드와 닉네임을 입력하세요</p>
+          <h1 className="text-4xl text-white" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>게임 입장</h1>
+          <p className="text-white/50 mt-2 text-base">게임 코드와 닉네임을 입력하세요</p>
         </div>
 
         <form onSubmit={handleJoin} className="game-card space-y-6">

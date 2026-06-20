@@ -53,10 +53,10 @@ export default function NarratorMessage({ message, type = 'info' }: NarratorMess
       className="rounded-2xl border p-5 backdrop-blur-md"
       style={{ background: s.bg, borderColor: s.border, boxShadow: s.glow }}
     >
-      <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: s.labelColor }}>
+      <p className="text-xs uppercase tracking-widest mb-2 font-bold" style={{ color: s.labelColor, fontFamily: '"Black Han Sans", sans-serif', letterSpacing: '0.1em' }}>
         {s.label}
       </p>
-      <p className="text-lg font-bold leading-relaxed" style={{ color: s.text }}>
+      <p className="text-lg leading-relaxed font-medium" style={{ color: s.text }}>
         {message}
       </p>
     </div>
