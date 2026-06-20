@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Rooms - read for authenticated users
+    match /rooms/{roomId} {
+      allow read: if request.auth != null;
+      allow write: if false; // only server API
+
+      // Public players - anyone authenticated can read (nickname, isAlive only)
+      match /publicPlayers/{playerId} {
+        allow read: if request.auth != null;
+        allow write: if false;
+      }
+
+      // Private players - only read own document
+      match /players/{playerId} {
+        allow read: if request.auth != null && request.auth.uid == playerId;
+        allow write: if false;
+      }
+
+      // Night actions - players can submit own actions via API only
+      match /nightActions/{actionId} {
+        allow read: if false;
+        allow write: if false;
+      }
+
+      // Votes - similar restriction
+      match /votes/{voteId} {
+        allow read: if false;
+        allow write: if false;
+      }
+
+      // Logs - read only
+      match /logs/{logId} {
+        allow read: if request.auth != null;
+        allow write: if false;
+      }
+    }
+  }
+}
