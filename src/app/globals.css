@@ -2,66 +2,209 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
+
 :root {
   --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 15, 10, 60;
-  --background-end-rgb: 5, 5, 30;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-    to bottom right,
-    rgb(var(--background-start-rgb)),
-    rgb(var(--background-end-rgb))
-  );
+  font-family: 'Noto Sans KR', sans-serif;
   min-height: 100vh;
+  background-color: #080818;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, rgba(88, 28, 135, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(30, 27, 75, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(15, 10, 40, 0.8) 0%, transparent 100%);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* 별빛 배경 애니메이션 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 95% 45%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 80%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 55%, rgba(255,255,255,0.3) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* Game card styles */
+/* 카드 기본 스타일 */
 .game-card {
-  @apply bg-white/10 backdrop-blur border border-white/20 rounded-2xl p-6;
+  @apply backdrop-blur-md border rounded-2xl p-6;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
+/* 마피아 분위기 카드 */
+.mafia-card {
+  @apply backdrop-blur-md border rounded-2xl p-6;
+  background: rgba(139, 0, 0, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 0 8px 32px rgba(139, 0, 0, 0.3), inset 0 1px 0 rgba(255,100,100,0.1);
+}
+
+/* 밤 분위기 카드 */
+.night-card {
+  @apply backdrop-blur-md border rounded-2xl p-6;
+  background: rgba(15, 10, 60, 0.6);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 8px 32px rgba(15, 10, 60, 0.5), inset 0 1px 0 rgba(150,150,255,0.08);
+}
+
+/* 버튼 */
 .btn-primary {
-  @apply bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+  @apply font-bold py-4 px-8 rounded-xl text-xl transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.4);
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 28px rgba(79, 70, 229, 0.6);
 }
 
 .btn-secondary {
-  @apply bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-xl text-lg border border-white/30 transition-all duration-200;
+  @apply font-bold py-3 px-6 rounded-xl text-lg border transition-all duration-200 hover:scale-105 active:scale-95;
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+  color: white;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.14);
 }
 
 .btn-danger {
-  @apply bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all duration-200;
+  @apply font-bold py-3 px-6 rounded-xl text-lg transition-all duration-200 hover:scale-105 active:scale-95;
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  color: white;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
 }
 
 .btn-success {
-  @apply bg-green-600 hover:bg-green-500 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-200 hover:scale-105 active:scale-95;
+  @apply font-bold py-4 px-8 rounded-xl text-xl transition-all duration-200 hover:scale-105 active:scale-95;
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: white;
+  box-shadow: 0 4px 20px rgba(22, 163, 74, 0.4);
 }
 
+/* 입력 필드 */
 .input-field {
-  @apply bg-white/10 border border-white/30 rounded-xl px-4 py-3 text-white text-xl placeholder-white/40 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 w-full;
+  @apply border rounded-xl px-4 py-3 text-white text-xl w-full transition-all duration-200;
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.2);
+  outline: none;
+}
+.input-field::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+.input-field:focus {
+  border-color: rgba(139, 92, 246, 0.7);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+  background: rgba(255,255,255,0.1);
 }
 
-/* Role colors */
+/* 역할 카드 색상 */
 .role-mafia {
-  @apply bg-red-500/20 border-red-400 text-red-200;
+  background: rgba(139, 0, 0, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+  box-shadow: 0 0 30px rgba(220, 38, 38, 0.2);
 }
 
 .role-police {
-  @apply bg-blue-500/20 border-blue-400 text-blue-200;
+  background: rgba(29, 78, 216, 0.25);
+  border-color: rgba(96, 165, 250, 0.5);
+  color: #93c5fd;
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
 }
 
 .role-doctor {
-  @apply bg-green-500/20 border-green-400 text-green-200;
+  background: rgba(21, 128, 61, 0.25);
+  border-color: rgba(74, 222, 128, 0.5);
+  color: #86efac;
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.2);
 }
 
 .role-citizen {
-  @apply bg-slate-500/20 border-slate-400 text-slate-200;
+  background: rgba(71, 85, 105, 0.25);
+  border-color: rgba(148, 163, 184, 0.4);
+  color: #cbd5e1;
+}
+
+/* 글로우 텍스트 */
+.text-glow-red {
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.8), 0 0 40px rgba(239, 68, 68, 0.4);
+}
+.text-glow-blue {
+  text-shadow: 0 0 20px rgba(96, 165, 250, 0.8), 0 0 40px rgba(96, 165, 250, 0.4);
+}
+.text-glow-purple {
+  text-shadow: 0 0 20px rgba(167, 139, 250, 0.8), 0 0 40px rgba(167, 139, 250, 0.4);
+}
+.text-glow-white {
+  text-shadow: 0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.2);
+}
+
+/* 깜빡이는 애니메이션 */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+}
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.7); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 22%, 24%, 55% { opacity: 0.6; }
+}
+
+.animate-pulse-glow { animation: pulse-glow 2s infinite; }
+.animate-pulse-red { animation: pulse-red 2s infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-flicker { animation: flicker 3s infinite; }
+
+/* 구분선 */
+.divider {
+  @apply border-t border-white/10 my-4;
+}
+
+/* 배지 */
+.badge {
+  @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-bold border;
+}
+.badge-alive {
+  background: rgba(22, 163, 74, 0.2);
+  border-color: rgba(74, 222, 128, 0.4);
+  color: #86efac;
+}
+.badge-dead {
+  background: rgba(71, 85, 105, 0.2);
+  border-color: rgba(100, 116, 139, 0.3);
+  color: #64748b;
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.4); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.6); }
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
 }

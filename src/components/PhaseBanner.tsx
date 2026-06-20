@@ -5,52 +5,74 @@ interface PhaseBannerProps {
   dayNumber?: number;
 }
 
-const phaseInfo: Record<GamePhase, { label: string; emoji: string; colorClass: string }> = {
+const phaseInfo: Record<GamePhase, { label: string; emoji: string; bg: string; border: string; text: string; glow?: string }> = {
   waiting: {
     label: '참여자 대기 중',
     emoji: '⏳',
-    colorClass: 'bg-slate-500/20 border-slate-400 text-slate-200',
+    bg: 'rgba(71,85,105,0.3)',
+    border: 'rgba(148,163,184,0.3)',
+    text: '#cbd5e1',
   },
   roleReveal: {
     label: '역할 확인',
     emoji: '🃏',
-    colorClass: 'bg-purple-500/20 border-purple-400 text-purple-200',
+    bg: 'rgba(109,40,217,0.3)',
+    border: 'rgba(167,139,250,0.5)',
+    text: '#c4b5fd',
+    glow: '0 0 20px rgba(139,92,246,0.4)',
   },
   night: {
     label: '밤',
     emoji: '🌙',
-    colorClass: 'bg-indigo-900/40 border-indigo-400 text-indigo-200',
+    bg: 'rgba(15,10,60,0.7)',
+    border: 'rgba(99,102,241,0.5)',
+    text: '#a5b4fc',
+    glow: '0 0 24px rgba(99,102,241,0.5)',
   },
   nightResult: {
     label: '밤 결과 발표',
     emoji: '🌅',
-    colorClass: 'bg-orange-500/20 border-orange-400 text-orange-200',
+    bg: 'rgba(180,83,9,0.25)',
+    border: 'rgba(251,146,60,0.4)',
+    text: '#fdba74',
+    glow: '0 0 20px rgba(251,146,60,0.3)',
   },
   dayDiscussion: {
     label: '낮 토론',
     emoji: '☀️',
-    colorClass: 'bg-yellow-500/20 border-yellow-400 text-yellow-200',
+    bg: 'rgba(161,98,7,0.25)',
+    border: 'rgba(250,204,21,0.4)',
+    text: '#fde047',
+    glow: '0 0 20px rgba(250,204,21,0.3)',
   },
   voting: {
     label: '투표',
     emoji: '🗳️',
-    colorClass: 'bg-red-500/20 border-red-400 text-red-200',
+    bg: 'rgba(153,27,27,0.3)',
+    border: 'rgba(239,68,68,0.5)',
+    text: '#fca5a5',
+    glow: '0 0 20px rgba(239,68,68,0.4)',
   },
   voteResult: {
     label: '투표 결과',
     emoji: '📋',
-    colorClass: 'bg-pink-500/20 border-pink-400 text-pink-200',
+    bg: 'rgba(157,23,77,0.25)',
+    border: 'rgba(244,114,182,0.4)',
+    text: '#f9a8d4',
+    glow: '0 0 20px rgba(244,114,182,0.3)',
   },
   ended: {
     label: '게임 종료',
     emoji: '🏁',
-    colorClass: 'bg-green-500/20 border-green-400 text-green-200',
+    bg: 'rgba(21,128,61,0.25)',
+    border: 'rgba(74,222,128,0.4)',
+    text: '#86efac',
+    glow: '0 0 20px rgba(74,222,128,0.3)',
   },
 };
 
 export default function PhaseBanner({ phase, dayNumber }: PhaseBannerProps) {
   const info = phaseInfo[phase];
-
   if (!info) return null;
 
   const showDay =
@@ -59,7 +81,13 @@ export default function PhaseBanner({ phase, dayNumber }: PhaseBannerProps) {
 
   return (
     <div
-      className={`inline-flex items-center gap-3 px-6 py-3 rounded-2xl border font-bold text-xl ${info.colorClass}`}
+      className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl border font-black text-xl backdrop-blur-md"
+      style={{
+        background: info.bg,
+        borderColor: info.border,
+        color: info.text,
+        boxShadow: info.glow ?? 'none',
+      }}
     >
       <span className="text-2xl">{info.emoji}</span>
       <span>

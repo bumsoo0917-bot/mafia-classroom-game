@@ -49,20 +49,37 @@ export default function Timer({ durationSeconds, phaseStartedAt }: TimerProps) {
       ? 'text-yellow-400'
       : 'text-red-400';
 
+  const isUrgent = remaining <= durationSeconds * 0.25 && remaining > 0;
+  const glowColor = remaining > durationSeconds * 0.5
+    ? 'rgba(34,197,94,0.5)'
+    : remaining > durationSeconds * 0.25
+    ? 'rgba(234,179,8,0.5)'
+    : 'rgba(239,68,68,0.7)';
+
   return (
-    <div className="game-card text-center space-y-3">
-      <p className="text-white/60 font-bold">남은 시간</p>
-      <div className={`text-6xl font-black font-mono ${colorClass}`}>
+    <div
+      className="rounded-2xl border p-5 text-center space-y-3 backdrop-blur-md"
+      style={{
+        background: 'rgba(0,0,0,0.4)',
+        borderColor: isUrgent ? 'rgba(239,68,68,0.5)' : 'rgba(255,255,255,0.12)',
+        boxShadow: isUrgent ? '0 0 24px rgba(239,68,68,0.3)' : 'none',
+      }}
+    >
+      <p className="text-white/50 font-bold text-sm tracking-widest uppercase">⏱ 남은 시간</p>
+      <div
+        className={`text-6xl font-black font-mono ${colorClass} ${isUrgent ? 'animate-pulse' : ''}`}
+        style={{ textShadow: `0 0 30px ${glowColor}` }}
+      >
         {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
       </div>
-      <div className="w-full bg-white/10 rounded-full h-3">
+      <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
         <div
           className={`h-3 rounded-full transition-all duration-1000 ${
             remaining > durationSeconds * 0.5
-              ? 'bg-green-500'
+              ? 'bg-gradient-to-r from-green-500 to-green-400'
               : remaining > durationSeconds * 0.25
-              ? 'bg-yellow-500'
-              : 'bg-red-500'
+              ? 'bg-gradient-to-r from-yellow-500 to-yellow-400'
+              : 'bg-gradient-to-r from-red-600 to-red-400'
           }`}
           style={{ width: `${pct}%` }}
         />
