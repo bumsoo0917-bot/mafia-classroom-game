@@ -30,7 +30,6 @@ export default function Home() {
       <div className="max-w-lg w-full text-center space-y-8 relative z-10">
 
         <div className="space-y-4">
-          <div className="text-8xl animate-float drop-shadow-2xl">🕵️</div>
           <div>
             <h1
               className="text-6xl md:text-7xl text-white leading-tight tracking-tight"
