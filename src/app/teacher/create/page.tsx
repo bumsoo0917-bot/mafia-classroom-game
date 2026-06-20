@@ -88,17 +88,17 @@ export default function CreateRoomPage() {
 
   return (
     <main className="min-h-screen p-6 md:p-10">
-      <PageBackground image="waiting-bg.png" overlay="darker" />
+      <PageBackground image="waiting-bg.webp" overlay="darker" />
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-black text-white">게임 방 만들기</h1>
-          <p className="text-white/60 mt-2 text-lg">게임 설정을 구성하세요</p>
+          <h1 className="text-4xl text-white" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>게임 방 만들기</h1>
+          <p className="text-white/50 mt-2 text-base">게임 설정을 구성하세요</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Room basic settings */}
+          {/* 기본 설정 */}
           <div className="game-card space-y-5">
-            <h2 className="text-2xl font-bold text-white">기본 설정</h2>
+            <h2 className="text-2xl font-bold text-white" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>기본 설정</h2>
 
             <div>
               <label className="block text-white/80 font-bold mb-2">방 이름</label>
@@ -106,7 +106,7 @@ export default function CreateRoomPage() {
                 type="text"
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
-                placeholder="예: 6학년 1반 마피아"
+                placeholder="예) 6학년 1반 마피아"
                 className="input-field"
                 required
               />
@@ -126,10 +126,10 @@ export default function CreateRoomPage() {
             </div>
           </div>
 
-          {/* Role settings */}
+          {/* 역할 설정 */}
           <div className="game-card space-y-5">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">역할 설정</h2>
+              <h2 className="text-2xl font-bold text-white" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>역할 설정</h2>
               <button
                 type="button"
                 onClick={applyRecommended}
@@ -179,13 +179,13 @@ export default function CreateRoomPage() {
             </div>
 
             {citizenCount < 0 && (
-              <p className="text-red-400 font-bold">⚠️ 역할 수가 최대 인원을 초과했습니다!</p>
+              <p className="text-red-400 font-bold">⚠️ 역할 수의 합이 최대 인원을 초과합니다!</p>
             )}
           </div>
 
-          {/* Time settings */}
+          {/* 시간 설정 */}
           <div className="game-card space-y-5">
-            <h2 className="text-2xl font-bold text-white">시간 설정</h2>
+            <h2 className="text-2xl font-bold text-white" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>시간 설정</h2>
 
             <div>
               <label className="block text-white/80 font-bold mb-2">
@@ -222,43 +222,48 @@ export default function CreateRoomPage() {
               />
               <div className="flex justify-between text-sm text-white/40 mt-1">
                 <span>30초</span>
-                <span>1분</span>
+                <span>1분 30초</span>
                 <span>3분</span>
               </div>
             </div>
           </div>
 
-          {/* Game rules */}
+          {/* 규칙 설정 */}
           <div className="game-card space-y-5">
-            <h2 className="text-2xl font-bold text-white">게임 규칙</h2>
+            <h2 className="text-2xl font-bold text-white" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>규칙 설정</h2>
 
             <div className="flex items-center justify-between">
-              <span className="text-white/80 font-bold text-lg">탈락 시 역할 공개</span>
+              <div>
+                <p className="text-white font-bold">탈락 시 역할 공개</p>
+                <p className="text-white/50 text-sm">탈락자의 역할을 모두에게 공개합니다</p>
+              </div>
               <button
                 type="button"
                 onClick={() => setRevealRoleOnDeath(!revealRoleOnDeath)}
-                className={`relative w-16 h-8 rounded-full transition-all duration-300 ${
-                  revealRoleOnDeath ? 'bg-indigo-500' : 'bg-white/20'
-                }`}
+                className={`w-14 h-7 rounded-full transition-all duration-300 ${revealRoleOnDeath ? 'bg-indigo-500' : 'bg-white/20'}`}
               >
-                <span
-                  className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-all duration-300 ${
-                    revealRoleOnDeath ? 'left-9' : 'left-1'
-                  }`}
-                />
+                <div className={`w-5 h-5 bg-white rounded-full mx-1 transition-all duration-300 ${revealRoleOnDeath ? 'translate-x-7' : 'translate-x-0'}`} />
               </button>
             </div>
 
             <div>
-              <label className="block text-white/80 font-bold mb-2">동률 처리 방식</label>
-              <select
-                value={tieRule}
-                onChange={(e) => setTieRule(e.target.value as TieRule)}
-                className="input-field"
-              >
-                <option value="noElimination">동률 시 아무도 탈락하지 않음</option>
-                <option value="revote">동률 시 재투표</option>
-              </select>
+              <p className="text-white font-bold mb-3">동률 처리 방식</p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setTieRule('noElimination')}
+                  className={`flex-1 py-3 rounded-xl font-bold border transition-all ${tieRule === 'noElimination' ? 'bg-indigo-500/30 border-indigo-400 text-indigo-200' : 'bg-white/5 border-white/20 text-white/50'}`}
+                >
+                  아무도 탈락 없음
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTieRule('revote')}
+                  className={`flex-1 py-3 rounded-xl font-bold border transition-all ${tieRule === 'revote' ? 'bg-indigo-500/30 border-indigo-400 text-indigo-200' : 'bg-white/5 border-white/20 text-white/50'}`}
+                >
+                  재투표
+                </button>
+              </div>
             </div>
           </div>
 
@@ -270,17 +275,16 @@ export default function CreateRoomPage() {
 
           <button
             type="submit"
-            disabled={loading || citizenCount < 0 || !roomName}
-            className="btn-primary w-full"
+            disabled={loading || citizenCount < 0 || !roomName.trim()}
+            className="btn-success w-full text-2xl py-5"
+            style={{ fontFamily: '"Black Han Sans", sans-serif' }}
           >
-            {loading ? '방 생성 중...' : '🎮 게임 방 만들기'}
+            {loading ? '생성 중...' : '🎮 방 만들기'}
           </button>
         </form>
 
         <div className="text-center mt-6">
-          <a href="/" className="text-white/40 hover:text-white/70 transition-colors">
-            ← 메인으로
-          </a>
+          <a href="/" className="text-white/40 hover:text-white/70 transition-colors">← 메인으로</a>
         </div>
       </div>
     </main>

@@ -1,13 +1,13 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import PageBackground from '@/components/PageBackground';
 import { IconSearch, IconShield, IconHeart, IconUsers, IconChevronRight } from '@/components/Icons';
 
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      <PageBackground image="main-bg.png" overlay="dark" />
+      <PageBackground image="main-bg.webp" overlay="dark" />
 
-      {/* 배경 장식 */}
+      {/* 諛곌꼍 ?μ떇 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-900/20 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-red-900/15 rounded-full blur-3xl" />
@@ -15,16 +15,15 @@ export default function Home() {
 
       <div className="max-w-lg w-full text-center space-y-8 relative z-10">
 
-        {/* 로고 */}
+        {/* 濡쒓퀬 */}
         <div className="space-y-4">
-          <div className="text-8xl animate-float drop-shadow-2xl">🕵️</div>
+          <div className="text-8xl animate-float drop-shadow-2xl">?빑截?/div>
           <div>
             <h1
               className="text-6xl md:text-7xl text-white leading-tight tracking-tight"
               style={{ fontFamily: '"Black Han Sans", sans-serif', textShadow: '0 0 40px rgba(167,139,250,0.5)' }}
             >
-              교실 마피아
-            </h1>
+              援먯떎 留덊뵾??            </h1>
             <h2
               className="text-3xl md:text-4xl mt-1"
               style={{
@@ -34,50 +33,50 @@ export default function Home() {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              추리 게임
+              異붾━ 寃뚯엫
             </h2>
           </div>
           <p className="text-white/40 text-base tracking-widest uppercase font-medium">
-            ── 마을에 숨어든 마피아를 찾아라 ──
+            ?? 留덉쓣???⑥뼱??留덊뵾?꾨? 李얠븘????
           </p>
         </div>
 
-        {/* 역할 카드 */}
+        {/* ??븷 移대뱶 */}
         <div className="game-card">
-          <p className="text-white/40 text-xs tracking-widest uppercase mb-4 font-bold">등장 인물</p>
+          <p className="text-white/40 text-xs tracking-widest uppercase mb-4 font-bold">?깆옣 ?몃Ъ</p>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-3 p-3 rounded-xl bg-red-900/20 border border-red-500/20">
               <IconSword className="text-red-400 flex-shrink-0" size={28} />
               <div className="text-left">
-                <div className="text-red-400 text-lg" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>마피아</div>
-                <div className="text-white/40 text-xs">밤에 시민을 탈락</div>
+                <div className="text-red-400 text-lg" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>留덊뵾??/div>
+                <div className="text-white/40 text-xs">諛ㅼ뿉 ?쒕????덈씫</div>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-900/20 border border-blue-500/20">
               <IconSearch className="text-blue-400 flex-shrink-0" size={28} />
               <div className="text-left">
-                <div className="text-blue-400 text-lg" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>경찰</div>
-                <div className="text-white/40 text-xs">정체를 조사</div>
+                <div className="text-blue-400 text-lg" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>寃쎌같</div>
+                <div className="text-white/40 text-xs">?뺤껜瑜?議곗궗</div>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-xl bg-green-900/20 border border-green-500/20">
               <IconHeart className="text-green-400 flex-shrink-0" size={28} />
               <div className="text-left">
-                <div className="text-green-400 text-lg" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>의사</div>
-                <div className="text-white/40 text-xs">시민을 보호</div>
+                <div className="text-green-400 text-lg" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>?섏궗</div>
+                <div className="text-white/40 text-xs">?쒕???蹂댄샇</div>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-700/30 border border-slate-500/20">
               <IconUsers className="text-slate-300 flex-shrink-0" size={28} />
               <div className="text-left">
-                <div className="text-slate-300 text-lg" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>시민</div>
-                <div className="text-white/40 text-xs">마피아를 찾아라</div>
+                <div className="text-slate-300 text-lg" style={{ fontFamily: '"Black Han Sans", sans-serif' }}>?쒕?</div>
+                <div className="text-white/40 text-xs">留덊뵾?꾨? 李얠븘??/div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 버튼 */}
+        {/* 踰꾪듉 */}
         <div className="space-y-4">
           <Link href="/teacher/login" className="block">
             <button
@@ -89,7 +88,7 @@ export default function Home() {
               }}
             >
               <IconShield size={28} />
-              교사용 시작하기
+              援먯궗???쒖옉?섍린
               <IconChevronRight size={22} />
             </button>
           </Link>
@@ -103,19 +102,19 @@ export default function Home() {
               }}
             >
               <IconSearch size={28} />
-              학생 입장하기
+              ?숈깮 ?낆옣?섍린
               <IconChevronRight size={22} />
             </button>
           </Link>
         </div>
 
-        <p className="text-white/20 text-xs tracking-widest">초등학교 6학년 교실용 · 교육 목적</p>
+        <p className="text-white/20 text-xs tracking-widest">珥덈벑?숆탳 6?숇뀈 援먯떎??쨌 援먯쑁 紐⑹쟻</p>
       </div>
     </main>
   );
 }
 
-// 마피아 칼 아이콘 (Icons.tsx에 없는 것 인라인으로)
+// 留덊뵾??移??꾩씠肄?(Icons.tsx???녿뒗 寃??몃씪?몄쑝濡?
 function IconSword({ size = 24, className = '' }: { size?: number; className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
@@ -127,3 +126,4 @@ function IconSword({ size = 24, className = '' }: { size?: number; className?: s
     </svg>
   );
 }
+

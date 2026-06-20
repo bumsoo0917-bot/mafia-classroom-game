@@ -3,7 +3,7 @@
 import { GamePhase } from '@/types/game';
 
 interface PageBackgroundProps {
-  image: string; // e.g. 'main-bg.png'
+  image: string; // e.g. 'main-bg.webp'
   overlay?: 'dark' | 'darker' | 'none';
 }
 
@@ -36,17 +36,17 @@ export default function PageBackground({ image, overlay = 'dark' }: PageBackgrou
 // 게임 단계에 따라 배경 이미지 반환
 export function getPhaseBackground(phase: GamePhase, winner?: 'mafia' | 'citizen' | null): string {
   if (phase === 'ended') {
-    return winner === 'mafia' ? 'ended-mafia-bg.png' : 'ended-citizen-bg.png';
+    return winner === 'mafia' ? 'ended-mafia-bg.webp' : 'ended-citizen-bg.webp';
   }
   const map: Record<GamePhase, string> = {
-    waiting: 'waiting-bg.png',
-    roleReveal: 'role-reveal-bg.png',
-    night: 'night-bg.png',
-    nightResult: 'night-result-bg.png',
-    dayDiscussion: 'day-discussion-bg.png',
-    voting: 'voting-bg.png',
-    voteResult: 'vote-result-bg.png',
-    ended: 'ended-citizen-bg.png',
+    waiting: 'waiting-bg.webp',
+    roleReveal: 'role-reveal-bg.webp',
+    night: 'night-bg.webp',
+    nightResult: 'night-result-bg.webp',
+    dayDiscussion: 'day-discussion-bg.webp',
+    voting: 'voting-bg.webp',
+    voteResult: 'vote-result-bg.webp',
+    ended: 'ended-citizen-bg.webp',
   };
-  return map[phase] ?? 'waiting-bg.png';
+  return map[phase] ?? 'waiting-bg.webp';
 }

@@ -19,11 +19,9 @@ export default function JoinPage() {
     setLoading(true);
 
     try {
-      // Anonymous Firebase sign-in
       const userCredential = await signInAnonymously(auth);
       const uid = userCredential.user.uid;
 
-      // Join room via API
       const res = await fetch('/api/join-room', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -47,7 +45,7 @@ export default function JoinPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-8">
-      <PageBackground image="waiting-bg.png" overlay="darker" />
+      <PageBackground image="waiting-bg.webp" overlay="darker" />
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
           <div className="text-6xl mb-4">🎮</div>
@@ -57,9 +55,7 @@ export default function JoinPage() {
 
         <form onSubmit={handleJoin} className="game-card space-y-6">
           <div>
-            <label className="block text-white/80 font-bold mb-2 text-lg">
-              게임 코드
-            </label>
+            <label className="block text-white/80 font-bold mb-2 text-lg">게임 코드</label>
             <input
               type="text"
               value={gameCode}
@@ -72,9 +68,7 @@ export default function JoinPage() {
           </div>
 
           <div>
-            <label className="block text-white/80 font-bold mb-2 text-lg">
-              닉네임
-            </label>
+            <label className="block text-white/80 font-bold mb-2 text-lg">닉네임</label>
             <input
               type="text"
               value={nickname}
@@ -102,9 +96,7 @@ export default function JoinPage() {
         </form>
 
         <div className="text-center mt-6">
-          <a href="/" className="text-white/40 hover:text-white/70 transition-colors">
-            ← 메인으로
-          </a>
+          <a href="/" className="text-white/40 hover:text-white/70 transition-colors">← 메인으로</a>
         </div>
       </div>
     </main>

@@ -36,7 +36,7 @@ export default function TeacherLoginPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-8">
-      <PageBackground image="main-bg.png" overlay="darker" />
+      <PageBackground image="main-bg.webp" overlay="darker" />
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
           <div className="text-6xl mb-4">👩‍🏫</div>
@@ -46,9 +46,7 @@ export default function TeacherLoginPage() {
 
         <form onSubmit={handleSubmit} className="game-card space-y-6">
           <div>
-            <label className="block text-white/80 font-bold mb-2 text-lg">
-              관리자 코드
-            </label>
+            <label className="block text-white/80 font-bold mb-2 text-lg">관리자 코드</label>
             <input
               type="password"
               value={adminCode}
@@ -75,9 +73,7 @@ export default function TeacherLoginPage() {
         </form>
 
         <div className="text-center mt-6">
-          <a href="/" className="text-white/40 hover:text-white/70 transition-colors">
-            ← 메인으로
-          </a>
+          <a href="/" className="text-white/40 hover:text-white/70 transition-colors">← 메인으로</a>
         </div>
       </div>
     </main>
