@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="min-h-screen bg-[#08081a] text-white">
+      <body className="min-h-screen text-white" style={{ backgroundColor: 'transparent' }}>
         {children}
       </body>
     </html>

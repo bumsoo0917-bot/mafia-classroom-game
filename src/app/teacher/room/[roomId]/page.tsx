@@ -126,7 +126,7 @@ export default function TeacherRoomPage() {
   const deadPlayers = publicPlayers.filter((p) => !p.isAlive);
 
   return (
-    <main className="min-h-screen p-4 md:p-8">
+    <main className="min-h-screen p-4 md:p-8" style={{ position: 'relative', zIndex: 1 }}>
       <PageBackground
         image={getPhaseBackground(room.currentPhase, room.winner)}
         overlay={room.currentPhase === 'night' ? 'darker' : 'dark'}

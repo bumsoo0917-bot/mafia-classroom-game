@@ -14,10 +14,6 @@ body {
   min-height: 100vh;
   letter-spacing: -0.01em;
   background-color: #080818;
-  background-image:
-    radial-gradient(ellipse at 20% 20%, rgba(88, 28, 135, 0.3) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(30, 27, 75, 0.4) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(15, 10, 40, 0.8) 0%, transparent 100%);
 }
 
 /* 별빛 배경 애니메이션 */

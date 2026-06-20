@@ -4,7 +4,7 @@ import { IconSearch, IconShield, IconHeart, IconUsers, IconChevronRight } from '
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <main className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden" style={{ position: 'relative', zIndex: 1 }}>
       <PageBackground image="main-bg.webp" overlay="dark" />
 
       {/* 諛곌꼍 ?μ떇 */}

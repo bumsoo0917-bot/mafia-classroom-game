@@ -87,7 +87,7 @@ export default function CreateRoomPage() {
   };
 
   return (
-    <main className="min-h-screen p-6 md:p-10">
+    <main className="min-h-screen p-6 md:p-10" style={{ position: 'relative', zIndex: 1 }}>
       <PageBackground image="waiting-bg.webp" overlay="darker" />
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">

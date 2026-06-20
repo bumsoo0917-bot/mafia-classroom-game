@@ -44,7 +44,7 @@ export default function JoinPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-8">
+    <main className="min-h-screen flex items-center justify-center p-8" style={{ position: 'relative', zIndex: 1 }}>
       <PageBackground image="waiting-bg.webp" overlay="darker" />
       <div className="max-w-md w-full">
         <div className="text-center mb-10">

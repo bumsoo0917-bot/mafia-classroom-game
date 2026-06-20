@@ -17,8 +17,10 @@ export default function PageBackground({ image, overlay = 'dark' }: PageBackgrou
 
   return (
     <div
-      className="fixed inset-0 -z-10"
       style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 0,
         backgroundImage: `url(/${image})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -26,8 +28,11 @@ export default function PageBackground({ image, overlay = 'dark' }: PageBackgrou
       }}
     >
       <div
-        className="absolute inset-0"
-        style={{ background: overlayStyle }}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: overlayStyle,
+        }}
       />
     </div>
   );
