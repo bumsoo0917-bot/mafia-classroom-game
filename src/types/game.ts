@@ -7,6 +7,8 @@ export type GamePhase =
   | 'nightResult'
   | 'dayDiscussion'
   | 'voting'
+  | 'finalDefense'
+  | 'finalVote'
   | 'voteResult'
   | 'ended';
 export type TieRule = 'revote' | 'noElimination';
@@ -18,6 +20,8 @@ export interface RoomSettings {
   doctorCount: number;
   discussionTime: number; // seconds
   voteTime: number; // seconds
+  finalDefenseTime: number; // seconds
+  finalVoteTime: number; // seconds
   revealRoleOnDeath: boolean;
   tieRule: TieRule;
 }
@@ -35,6 +39,8 @@ export interface Room {
   lastResultMessage: string | null;
   settings: RoomSettings;
   phaseStartedAt: unknown;
+  finalDefenseTargetId: string | null; // 최후변론 대상자 ID
+  finalDefenseTargetNickname: string | null; // 최후변론 대상자 닉네임
 }
 
 export interface Player {
@@ -71,6 +77,14 @@ export interface Vote {
   dayNumber: number;
   voterId: string;
   targetPlayerId: string;
+  createdAt: unknown;
+}
+
+export interface FinalVote {
+  id: string;
+  dayNumber: number;
+  voterId: string;
+  vote: 'eliminate' | 'save';
   createdAt: unknown;
 }
 

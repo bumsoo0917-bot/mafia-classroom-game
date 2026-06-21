@@ -144,6 +144,16 @@ export default function TeacherRoomPage() {
         {/* Game Code - very large for projector */}
         <GameCodeDisplay gameCode={room.gameCode} />
 
+        {/* Final Defense Banner */}
+        {(room.currentPhase === 'finalDefense' || room.currentPhase === 'finalVote') && room.finalDefenseTargetNickname && (
+          <div className="game-card bg-purple-500/20 border-purple-400 text-center py-4">
+            <p className="text-lg text-purple-300 font-bold">
+              {room.currentPhase === 'finalDefense' ? '🎤 최후변론 중' : '⚖️ 최종 투표 중'}
+            </p>
+            <p className="text-3xl font-black text-white mt-1">{room.finalDefenseTargetNickname}</p>
+          </div>
+        )}
+
         {/* Result Message */}
         {room.lastResultMessage && (
           <div className="game-card bg-amber-500/20 border-amber-400 text-center py-6">

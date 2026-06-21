@@ -18,6 +18,8 @@ export default function CreateRoomPage() {
   const [doctorCount, setDoctorCount] = useState(1);
   const [discussionTime, setDiscussionTime] = useState(180);
   const [voteTime, setVoteTime] = useState(60);
+  const [finalDefenseTime, setFinalDefenseTime] = useState(60);
+  const [finalVoteTime, setFinalVoteTime] = useState(30);
   const [revealRoleOnDeath, setRevealRoleOnDeath] = useState(true);
   const [tieRule, setTieRule] = useState<TieRule>('noElimination');
 
@@ -66,6 +68,8 @@ export default function CreateRoomPage() {
             doctorCount,
             discussionTime,
             voteTime,
+            finalDefenseTime,
+            finalVoteTime,
             revealRoleOnDeath,
             tieRule,
           },
@@ -224,6 +228,46 @@ export default function CreateRoomPage() {
                 <span>30초</span>
                 <span>1분 30초</span>
                 <span>3분</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-white/80 font-bold mb-2">
+                최후변론 시간 ({finalDefenseTime}초)
+              </label>
+              <input
+                type="range"
+                value={finalDefenseTime}
+                onChange={(e) => setFinalDefenseTime(Number(e.target.value))}
+                min={15}
+                max={120}
+                step={15}
+                className="w-full accent-purple-500"
+              />
+              <div className="flex justify-between text-sm text-white/40 mt-1">
+                <span>15초</span>
+                <span>1분</span>
+                <span>2분</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-white/80 font-bold mb-2">
+                최종 투표 시간 ({finalVoteTime}초)
+              </label>
+              <input
+                type="range"
+                value={finalVoteTime}
+                onChange={(e) => setFinalVoteTime(Number(e.target.value))}
+                min={15}
+                max={90}
+                step={15}
+                className="w-full accent-red-500"
+              />
+              <div className="flex justify-between text-sm text-white/40 mt-1">
+                <span>15초</span>
+                <span>45초</span>
+                <span>1분 30초</span>
               </div>
             </div>
           </div>

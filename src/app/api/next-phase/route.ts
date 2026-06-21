@@ -154,50 +154,81 @@ export async function POST(req: NextRequest) {
         createdAt: FieldValue.serverTimestamp(),
       });
     } else if (currentPhase === 'voting') {
-      nextPhase = 'voteResult';
-
-      // Process votes
+      // 투표 집계 → 최다 득표자 확인 → finalDefense 단계로
       const votesSnap = await adminDb
-        .collection('rooms')
-        .doc(roomId)
-        .collection('votes')
-        .where('dayNumber', '==', dayNumber)
-        .get();
+        .collection('rooms').doc(roomId).collection('votes')
+        .where('dayNumber', '==', dayNumber).get();
 
       const votes: Vote[] = votesSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Vote));
-      const eliminatedId = resolveVote(votes, tieRule);
+      const topId = resolveVote(votes, tieRule);
+
+      if (topId) {
+        const topSnap = await adminDb.collection('rooms').doc(roomId).collection('players').doc(topId).get();
+        const topNickname = topSnap.data()?.nickname ?? '알 수 없음';
+        nextPhase = 'finalDefense';
+        updateData.finalDefenseTargetId = topId;
+        updateData.finalDefenseTargetNickname = topNickname;
+        updateData.lastResultMessage = null;
+        batch.set(logRef, {
+          type: 'phaseChange',
+          message: `${topNickname}님이 최다 득표로 최후변론을 시작합니다.`,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      } else {
+        // 동률 - 바로 voteResult 로
+        nextPhase = 'voteResult';
+        updateData.lastResultMessage = '동률로 아무도 탈락하지 않았습니다.';
+        updateData.finalDefenseTargetId = null;
+        updateData.finalDefenseTargetNickname = null;
+        batch.set(logRef, {
+          type: 'voteResult',
+          message: '동률로 아무도 탈락하지 않았습니다.',
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      }
+    } else if (currentPhase === 'finalDefense') {
+      // 최후변론 → 최종투표
+      nextPhase = 'finalVote';
+      batch.set(logRef, {
+        type: 'phaseChange',
+        message: `${roomData.finalDefenseTargetNickname ?? ''}님에 대한 최종 투표를 시작합니다.`,
+        createdAt: FieldValue.serverTimestamp(),
+      });
+    } else if (currentPhase === 'finalVote') {
+      // 최종투표 집계 → voteResult
+      nextPhase = 'voteResult';
+      const finalVotesSnap = await adminDb
+        .collection('rooms').doc(roomId).collection('finalVotes')
+        .where('dayNumber', '==', dayNumber).get();
+
+      const eliminateCount = finalVotesSnap.docs.filter(d => d.data().vote === 'eliminate').length;
+      const saveCount = finalVotesSnap.docs.filter(d => d.data().vote === 'save').length;
+      const targetId = roomData.finalDefenseTargetId as string | null;
+      const targetNickname = roomData.finalDefenseTargetNickname as string | null;
 
       let resultMessage: string;
 
-      if (eliminatedId) {
-        const eliminatedSnap = await adminDb
-          .collection('rooms')
-          .doc(roomId)
-          .collection('players')
-          .doc(eliminatedId)
-          .get();
-
-        if (eliminatedSnap.exists) {
-          const eliminatedData = eliminatedSnap.data()!;
-          const playerRef = adminDb.collection('rooms').doc(roomId).collection('players').doc(eliminatedId);
-          const publicPlayerRef = adminDb.collection('rooms').doc(roomId).collection('publicPlayers').doc(eliminatedId);
-
-          batch.update(playerRef, { isAlive: false });
-          batch.update(publicPlayerRef, { isAlive: false });
-
-          const roleText = roomData.settings?.revealRoleOnDeath
-            ? ` (역할: ${eliminatedData.role === 'mafia' ? '마피아' : eliminatedData.role === 'police' ? '경찰' : eliminatedData.role === 'doctor' ? '의사' : '시민'})`
-            : '';
-
-          resultMessage = `투표 결과 ${eliminatedData.nickname}님이 탈락했습니다.${roleText}`;
-        } else {
-          resultMessage = '투표 결과가 처리되었습니다.';
-        }
+      if (targetId && eliminateCount > saveCount) {
+        // 추방 확정
+        const playerRef = adminDb.collection('rooms').doc(roomId).collection('players').doc(targetId);
+        const publicPlayerRef = adminDb.collection('rooms').doc(roomId).collection('publicPlayers').doc(targetId);
+        const targetSnap = await playerRef.get();
+        const roleText = roomData.settings?.revealRoleOnDeath && targetSnap.exists
+          ? ` (역할: ${targetSnap.data()?.role === 'mafia' ? '마피아' : targetSnap.data()?.role === 'police' ? '경찰' : targetSnap.data()?.role === 'doctor' ? '의사' : '시민'})`
+          : '';
+        batch.update(playerRef, { isAlive: false });
+        batch.update(publicPlayerRef, { isAlive: false });
+        resultMessage = `최종 투표 결과 ${targetNickname}님이 추방되었습니다.${roleText} (추방 ${eliminateCount}표 vs 석방 ${saveCount}표)`;
+      } else if (targetId) {
+        // 석방
+        resultMessage = `최종 투표 결과 ${targetNickname}님이 석방되었습니다. (추방 ${eliminateCount}표 vs 석방 ${saveCount}표)`;
       } else {
-        resultMessage = '동률로 아무도 탈락하지 않았습니다.';
+        resultMessage = '최종 투표가 완료되었습니다.';
       }
 
       updateData.lastResultMessage = resultMessage;
+      updateData.finalDefenseTargetId = null;
+      updateData.finalDefenseTargetNickname = null;
       batch.set(logRef, {
         type: 'voteResult',
         message: resultMessage,

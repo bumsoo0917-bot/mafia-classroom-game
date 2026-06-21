@@ -46,6 +46,7 @@ export default function StudentRoomPage() {
   const [publicPlayers, setPublicPlayers] = useState<PublicPlayer[]>([]);
   const [hasSubmittedAction, setHasSubmittedAction] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
+  const [hasFinalVoted, setHasFinalVoted] = useState(false);
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState('');
@@ -86,6 +87,7 @@ export default function StudentRoomPage() {
   useEffect(() => {
     setHasSubmittedAction(false);
     setHasVoted(false);
+    setHasFinalVoted(false);
     setSelectedTarget(null);
     setActionError('');
   }, [room?.currentPhase, room?.dayNumber]);
@@ -145,6 +147,29 @@ export default function StudentRoomPage() {
 
       if (res.ok) {
         setHasVoted(true);
+      } else {
+        const data = await res.json();
+        setActionError(data.error ?? '투표에 실패했습니다.');
+      }
+    } catch {
+      setActionError('오류가 발생했습니다.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const submitFinalVote = async (vote: 'eliminate' | 'save') => {
+    if (!myPlayer) return;
+    setSubmitting(true);
+    setActionError('');
+    try {
+      const res = await fetch('/api/submit-final-vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomId, voterId: uid, vote }),
+      });
+      if (res.ok) {
+        setHasFinalVoted(true);
       } else {
         const data = await res.json();
         setActionError(data.error ?? '투표에 실패했습니다.');
@@ -425,6 +450,94 @@ export default function StudentRoomPage() {
               >
                 {submitting ? '투표 중...' : '투표하기'}
               </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* FINAL DEFENSE */}
+      {room.currentPhase === 'finalDefense' && (
+        <div className="space-y-4">
+          {uid === room.finalDefenseTargetId ? (
+            <>
+              <NarratorMessage message="당신이 최다 득표를 받았습니다. 지금 최후변론을 하세요!" />
+              <div className="game-card text-center space-y-4 bg-purple-500/20 border-2 border-purple-400">
+                <div className="text-6xl">🎤</div>
+                <h2 className="text-3xl font-black text-purple-200">지금 최후변론을 하세요!</h2>
+                <p className="text-white/70 text-lg">친구들을 설득해 추방을 막아보세요.</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <NarratorMessage message={`${room.finalDefenseTargetNickname ?? ''}님이 최후변론 중입니다. 조용히 들어주세요.`} />
+              <div className="game-card text-center space-y-4 bg-purple-500/20 border-purple-400">
+                <div className="text-6xl">🎤</div>
+                <p className="text-xl text-white/70">최후변론 중</p>
+                <h2 className="text-3xl font-black text-purple-200">{room.finalDefenseTargetNickname}님</h2>
+                <p className="text-white/60">변론이 끝난 후 최종 투표가 진행됩니다.</p>
+              </div>
+            </>
+          )}
+          {room.settings?.finalDefenseTime && (
+            <Timer durationSeconds={room.settings.finalDefenseTime} phaseStartedAt={room.phaseStartedAt} />
+          )}
+        </div>
+      )}
+
+      {/* FINAL VOTE */}
+      {room.currentPhase === 'finalVote' && myPlayer && (
+        <div className="space-y-4">
+          <NarratorMessage message={`${room.finalDefenseTargetNickname ?? ''}님을 추방할지 최종 투표합니다.`} />
+
+          {room.settings?.finalVoteTime && (
+            <Timer durationSeconds={room.settings.finalVoteTime} phaseStartedAt={room.phaseStartedAt} />
+          )}
+
+          {!isAlive ? (
+            <div className="game-card text-center">
+              <p className="text-2xl text-white/60">💀 탈락자는 투표할 수 없습니다</p>
+            </div>
+          ) : uid === room.finalDefenseTargetId ? (
+            <div className="game-card text-center space-y-3 bg-yellow-500/20 border-yellow-400">
+              <div className="text-5xl">⚖️</div>
+              <p className="text-2xl font-bold text-yellow-200">최후변론 대상자는 투표할 수 없습니다</p>
+              <p className="text-white/60">다른 친구들의 투표를 기다려 주세요</p>
+            </div>
+          ) : hasFinalVoted ? (
+            <div className="game-card text-center space-y-3 bg-green-500/20 border-green-400">
+              <div className="text-5xl">✅</div>
+              <p className="text-2xl font-bold text-green-300">투표 완료!</p>
+              <p className="text-white/60">결과를 기다리는 중입니다</p>
+            </div>
+          ) : (
+            <div className="game-card space-y-6">
+              <div className="text-center">
+                <div className="text-5xl mb-2">⚖️</div>
+                <h3 className="text-2xl font-black text-white">
+                  <span className="text-red-300">{room.finalDefenseTargetNickname}</span>님을 추방할까요?
+                </h3>
+              </div>
+
+              {actionError && (
+                <p className="text-red-400 font-bold text-center">{actionError}</p>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => submitFinalVote('eliminate')}
+                  disabled={submitting}
+                  className="py-6 rounded-2xl border-2 font-black text-xl transition-all bg-red-600/40 border-red-400 text-red-200 hover:bg-red-600/60 hover:scale-105 disabled:opacity-50"
+                >
+                  👊 추방
+                </button>
+                <button
+                  onClick={() => submitFinalVote('save')}
+                  disabled={submitting}
+                  className="py-6 rounded-2xl border-2 font-black text-xl transition-all bg-blue-600/40 border-blue-400 text-blue-200 hover:bg-blue-600/60 hover:scale-105 disabled:opacity-50"
+                >
+                  🛡️ 석방
+                </button>
+              </div>
             </div>
           )}
         </div>

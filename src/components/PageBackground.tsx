@@ -50,6 +50,8 @@ export function getPhaseBackground(phase: GamePhase, winner?: 'mafia' | 'citizen
     nightResult: 'night-result-bg.webp',
     dayDiscussion: 'day-discussion-bg.webp',
     voting: 'voting-bg.webp',
+    finalDefense: 'voting-bg.webp',
+    finalVote: 'voting-bg.webp',
     voteResult: 'vote-result-bg.webp',
     ended: 'ended-citizen-bg.webp',
   };

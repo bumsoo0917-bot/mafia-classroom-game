@@ -53,6 +53,22 @@ const phaseInfo: Record<GamePhase, { label: string; emoji: string; bg: string; b
     text: '#fca5a5',
     glow: '0 0 20px rgba(239,68,68,0.4)',
   },
+  finalDefense: {
+    label: '최후변론',
+    emoji: '🎤',
+    bg: 'rgba(124,58,237,0.3)',
+    border: 'rgba(167,139,250,0.5)',
+    text: '#c4b5fd',
+    glow: '0 0 20px rgba(167,139,250,0.4)',
+  },
+  finalVote: {
+    label: '최종 투표',
+    emoji: '⚖️',
+    bg: 'rgba(153,27,27,0.35)',
+    border: 'rgba(248,113,113,0.5)',
+    text: '#fca5a5',
+    glow: '0 0 20px rgba(248,113,113,0.4)',
+  },
   voteResult: {
     label: '투표 결과',
     emoji: '📋',
