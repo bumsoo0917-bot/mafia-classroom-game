@@ -63,6 +63,22 @@ export function assignRoles(players: Player[], settings: RoomSettings): Player[]
   });
 }
 
+export function resolveMafiaTarget(mafiaTargetIds: string[]): string | null {
+  if (mafiaTargetIds.length === 0) return null;
+
+  const targetCounts: Record<string, number> = {};
+  for (const targetId of mafiaTargetIds) {
+    targetCounts[targetId] = (targetCounts[targetId] ?? 0) + 1;
+  }
+
+  const entries = Object.entries(targetCounts).sort((a, b) => b[1] - a[1]);
+  const maxVotes = entries[0][1];
+  const topTargets = entries.filter(([, count]) => count === maxVotes).map(([targetId]) => targetId);
+  const randomIndex = Math.floor(Math.random() * topTargets.length);
+
+  return topTargets[randomIndex];
+}
+
 export function resolveNight(
   mafiaTargetId: string | null,
   doctorTargetId: string | null

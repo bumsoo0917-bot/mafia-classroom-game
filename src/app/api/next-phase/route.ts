@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebaseAdmin';
-import { resolveNight, resolveVote, checkWinCondition, policeCheck } from '@/lib/gameLogic';
+import { resolveMafiaTarget, resolveNight, resolveVote, checkWinCondition, policeCheck } from '@/lib/gameLogic';
 import { GamePhase, Player, Vote, TieRule } from '@/types/game';
 import { FieldValue } from 'firebase-admin/firestore';
 
@@ -106,6 +106,7 @@ export async function POST(req: NextRequest) {
         .where('dayNumber', '==', dayNumber)
         .get();
 
+      const mafiaTargetIds: string[] = [];
       let mafiaTargetId: string | null = null;
       let doctorTargetId: string | null = null;
       let policeTargetId: string | null = null;
@@ -113,7 +114,7 @@ export async function POST(req: NextRequest) {
 
       for (const actionDoc of nightActionsSnap.docs) {
         const action = actionDoc.data();
-        if (action.actionType === 'mafiaKill' && dayNumber !== 1) mafiaTargetId = action.targetPlayerId;
+        if (action.actionType === 'mafiaKill' && dayNumber !== 1) mafiaTargetIds.push(action.targetPlayerId);
         if (action.actionType === 'doctorSave' && dayNumber !== 1) doctorTargetId = action.targetPlayerId;
         if (action.actionType === 'policeCheck' && dayNumber !== 1) {
           policeTargetId = action.targetPlayerId;
@@ -121,6 +122,7 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      mafiaTargetId = resolveMafiaTarget(mafiaTargetIds);
       const eliminatedId = resolveNight(mafiaTargetId, doctorTargetId);
       let resultMessage: string;
 
