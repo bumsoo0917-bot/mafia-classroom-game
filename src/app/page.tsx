@@ -34,7 +34,8 @@ export default function Home() {
             <h1
               className="text-6xl md:text-7xl text-white leading-tight"
               style={{
-                fontFamily: '"Song Myung", "Black Han Sans", serif',
+                fontFamily: '"Hahmlet", "Black Han Sans", serif',
+                fontWeight: 900,
                 letterSpacing: 0,
                 textShadow: '0 0 34px rgba(167,139,250,0.62), 0 8px 28px rgba(0,0,0,0.72)',
               }}
@@ -56,7 +57,7 @@ export default function Home() {
           </div>
           <p
             className="text-amber-100/70 text-lg md:text-xl font-medium"
-            style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
+            style={{ fontFamily: '"Hahmlet", serif', fontWeight: 600, letterSpacing: 0 }}
           >
             마을에 숨어든 마피아를 찾아라
           </p>

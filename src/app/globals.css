@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700;900&family=Song+Myung&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Hahmlet:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap');
 
 :root {
   --foreground-rgb: 255, 255, 255;
@@ -12,7 +12,7 @@ body {
   color: rgb(var(--foreground-rgb));
   font-family: 'Noto Sans KR', sans-serif;
   min-height: 100vh;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   background-color: #080818;
 }
 

@@ -222,13 +222,13 @@ export default function StudentRoomPage() {
           <div className="w-full max-w-2xl game-card bg-amber-500/20 border-2 border-amber-400 text-center space-y-6 animate-pulse-glow">
             <p
               className="text-4xl md:text-5xl text-amber-100 text-glow-white"
-              style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
+              style={{ fontFamily: '"Hahmlet", serif', fontWeight: 700, letterSpacing: 0 }}
             >
               밤이 내려앉았습니다.
             </p>
             <div
               className="space-y-5 text-xl md:text-2xl text-white/85 leading-relaxed text-balance"
-              style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
+              style={{ fontFamily: '"Hahmlet", serif', fontWeight: 600, letterSpacing: 0 }}
             >
               <p>
                 평화롭던 {room.roomName} 마을에 이상한 소문이 퍼졌습니다.<br />
