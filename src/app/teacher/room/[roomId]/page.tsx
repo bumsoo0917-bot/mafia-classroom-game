@@ -28,129 +28,61 @@ const roleColors: Record<string, string> = {
   doctor: 'bg-green-500/20 border-green-400 text-green-200',
   citizen: 'bg-slate-500/20 border-slate-400 text-slate-200',
 };
-type AmbientAudioNodes = {
-  context: AudioContext;
-  masterGain: GainNode;
-  sources: AudioScheduledSourceNode[];
-  intervalId: number;
-};
-
 function TeacherAmbientAudio() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(45);
-  const nodesRef = useRef<AmbientAudioNodes | null>(null);
-
-  const stopAmbient = () => {
-    const nodes = nodesRef.current;
-    if (!nodes) return;
-
-    window.clearInterval(nodes.intervalId);
-    nodes.masterGain.gain.setTargetAtTime(0, nodes.context.currentTime, 0.08);
-    for (const source of nodes.sources) {
-      try {
-        source.stop(nodes.context.currentTime + 0.15);
-      } catch {
-        // Source may already be stopped by the browser.
-      }
-    }
-    window.setTimeout(() => {
-      void nodes.context.close();
-    }, 250);
-    nodesRef.current = null;
-  };
-
-  const startAmbient = async () => {
-    if (nodesRef.current) return;
-
-    const AudioContextClass = window.AudioContext ||
-      (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
-
-    const context = new AudioContextClass();
-    await context.resume();
-
-    const masterGain = context.createGain();
-    masterGain.gain.value = 0;
-    masterGain.connect(context.destination);
-
-    const lowPass = context.createBiquadFilter();
-    lowPass.type = 'lowpass';
-    lowPass.frequency.value = 520;
-    lowPass.Q.value = 0.9;
-    lowPass.connect(masterGain);
-
-    const droneGain = context.createGain();
-    droneGain.gain.value = 0.13;
-    droneGain.connect(lowPass);
-
-    const pulseGain = context.createGain();
-    pulseGain.gain.value = 0.022;
-    pulseGain.connect(lowPass);
-
-    const lfoGain = context.createGain();
-    lfoGain.gain.value = 0.018;
-    lfoGain.connect(pulseGain.gain);
-
-    const sources: AudioScheduledSourceNode[] = [];
-    const createTone = (frequency: number, type: OscillatorType, destination: AudioNode, detune = 0) => {
-      const oscillator = context.createOscillator();
-      oscillator.type = type;
-      oscillator.frequency.value = frequency;
-      oscillator.detune.value = detune;
-      oscillator.connect(destination);
-      oscillator.start();
-      sources.push(oscillator);
-    };
-
-    createTone(55, 'sine', droneGain, -6);
-    createTone(82.41, 'triangle', droneGain, 4);
-    createTone(146.83, 'sawtooth', pulseGain, -12);
-
-    const lfo = context.createOscillator();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.42;
-    lfo.connect(lfoGain);
-    lfo.start();
-    sources.push(lfo);
-
-    const intervalId = window.setInterval(() => {
-      const now = context.currentTime;
-      lowPass.frequency.cancelScheduledValues(now);
-      lowPass.frequency.setValueAtTime(lowPass.frequency.value, now);
-      lowPass.frequency.linearRampToValueAtTime(420 + Math.random() * 180, now + 2.5);
-    }, 3000);
-
-    masterGain.gain.setTargetAtTime((volume / 100) * 0.18, context.currentTime, 0.08);
-    nodesRef.current = { context, masterGain, sources, intervalId };
-  };
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const toggleAmbient = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = volume / 100;
+
     if (isPlaying) {
-      stopAmbient();
+      audio.pause();
       setIsPlaying(false);
       return;
     }
 
-    await startAmbient();
-    setIsPlaying(true);
+    try {
+      await audio.play();
+      setIsPlaying(true);
+    } catch (error) {
+      console.error('ambient audio play failed:', error);
+      setIsPlaying(false);
+    }
   };
 
   useEffect(() => {
-    const nodes = nodesRef.current;
-    if (!nodes) return;
-    nodes.masterGain.gain.setTargetAtTime((volume / 100) * 0.18, nodes.context.currentTime, 0.05);
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
   }, [volume]);
 
   useEffect(() => {
-    return () => stopAmbient();
+    const audio = audioRef.current;
+    return () => {
+      if (audio) {
+        audio.pause();
+      }
+    };
   }, []);
 
   return (
     <div className="game-card bg-black/40 border-amber-500/30 space-y-4">
+      <audio
+        ref={audioRef}
+        src="/audio/dark-ambient-soundscape.mp3"
+        loop
+        preload="auto"
+        onEnded={() => setIsPlaying(false)}
+      />
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-white">🎧 분위기 배경음악</h2>
-          <p className="text-white/50 text-sm">마피아 게임에 어울리는 어두운 긴장감을 재생합니다.</p>
+          <p className="text-white/50 text-sm">어두운 앰비언트 사운드스케이프를 반복 재생합니다.</p>
         </div>
         <button
           type="button"
@@ -179,7 +111,6 @@ function TeacherAmbientAudio() {
     </div>
   );
 }
-
 export default function TeacherRoomPage() {
   const params = useParams();
   const roomId = params.roomId as string;

@@ -50,6 +50,7 @@ export default function StudentRoomPage() {
   const [selectedTarget, setSelectedTarget] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState('');
+  const [hasSeenFirstNightStory, setHasSeenFirstNightStory] = useState(false);
 
   const uid = auth.currentUser?.uid ?? '';
 
@@ -90,6 +91,7 @@ export default function StudentRoomPage() {
     setHasFinalVoted(false);
     setSelectedTarget(null);
     setActionError('');
+    setHasSeenFirstNightStory(false);
   }, [room?.currentPhase, room?.dayNumber]);
 
   const submitNightAction = async () => {
@@ -192,6 +194,14 @@ export default function StudentRoomPage() {
   const isAlive = myPlayer?.isAlive ?? true;
   const alivePlayers = publicPlayers.filter((p) => p.isAlive);
   const isFirstNight = room.currentPhase === 'night' && room.dayNumber === 1;
+  const showFirstNightStory = isFirstNight && !hasSeenFirstNightStory;
+  const firstNightMessage = myPlayer?.role === 'mafia'
+    ? '오늘 밤은 공격하지 않습니다. 정체를 숨기고 기다리세요.'
+    : myPlayer?.role === 'police'
+    ? '오늘 밤은 조사하지 않습니다. 첫 회의 전까지 단서를 기다리세요.'
+    : myPlayer?.role === 'doctor'
+    ? '오늘 밤은 보호하지 않습니다. 첫 회의 전까지 상황을 지켜보세요.'
+    : '조용히 밤을 보내고, 내일 회의에서 단서를 찾아보세요.';
   const policeResultCard = myPlayer?.role === 'police' && myPlayer.policeLastResult ? (
     <div className="game-card bg-blue-500/20 border-blue-400 text-center space-y-3">
       <div className="text-5xl">🔍</div>
@@ -207,6 +217,51 @@ export default function StudentRoomPage() {
         image={getPhaseBackground(room.currentPhase, room.winner)}
         overlay={room.currentPhase === 'night' ? 'darker' : 'dark'}
       />
+      {showFirstNightStory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-2xl game-card bg-amber-500/20 border-2 border-amber-400 text-center space-y-6 animate-pulse-glow">
+            <p
+              className="text-4xl md:text-5xl text-amber-100 text-glow-white"
+              style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
+            >
+              밤이 내려앉았습니다.
+            </p>
+            <div
+              className="space-y-5 text-xl md:text-2xl text-white/85 leading-relaxed text-balance"
+              style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
+            >
+              <p>
+                평화롭던 {room.roomName} 마을에 이상한 소문이 퍼졌습니다.<br />
+                우리 중 누군가가 마피아라는 이야기입니다.
+              </p>
+
+              <p>
+                아직 아무도 서로를 의심할 근거가 없습니다.<br />
+                시민들은 불안한 마음으로 밤을 보내고,<br />
+                마피아도 정체를 숨긴 채 조용히 상황을 지켜봅니다.
+              </p>
+
+              <p>
+                날이 밝으면 모두가 한자리에 모여<br />
+                누가 마피아인지 첫 회의를 시작합니다.
+              </p>
+
+              <p className="text-amber-100 font-bold">
+                첫날 밤에는 아무도 행동하지 않습니다.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setHasSeenFirstNightStory(true)}
+              className="btn-primary w-full text-2xl py-5"
+              style={{ fontFamily: '"Black Han Sans", sans-serif', letterSpacing: 0 }}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Dead player banner */}
       {myPlayer && !isAlive && (
         <div className="bg-black/50 border border-white/20 rounded-2xl p-4 text-center">
@@ -268,22 +323,6 @@ export default function StudentRoomPage() {
             </div>
           </div>
 
-          <div className="game-card bg-amber-500/20 border-amber-400 space-y-4 text-center">
-            <p
-              className="text-3xl md:text-4xl text-amber-100 text-glow-white"
-              style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
-            >
-              마을에 수상한 밤이 찾아왔습니다
-            </p>
-            <p
-              className="text-xl md:text-2xl text-white/85 leading-relaxed text-balance"
-              style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
-            >
-              평화롭던 {room.roomName} 마을에 마피아가 숨어들었다는 소문이 퍼졌습니다.
-              시민들은 서로의 표정을 살피며, 날이 밝으면 모두 모여 누가 마피아인지 첫 회의를 열기로 했습니다.
-              하지만 아직 첫 회의가 시작되기 전, 마피아는 정체를 드러낼 수 없어 오늘 밤 아무도 공격하지 못합니다.
-            </p>
-          </div>
 
           {myPlayer.role === 'mafia' && myPlayer.mafiaTeamIds && myPlayer.mafiaTeamIds.length > 1 && (
             <div className="game-card bg-red-500/20 border-red-400 space-y-3">
@@ -312,7 +351,7 @@ export default function StudentRoomPage() {
             <div className="game-card text-center">
               <p className="text-2xl text-white/60">💀 탈락자는 행동할 수 없습니다</p>
             </div>
-          ) : myPlayer.role === 'citizen' ? (
+          ) : myPlayer.role === 'citizen' && !isFirstNight ? (
             <div className="game-card text-center space-y-3">
               <div className="text-5xl">🌙</div>
               <p className="text-2xl font-bold text-white">밤입니다</p>
@@ -321,10 +360,8 @@ export default function StudentRoomPage() {
           ) : isFirstNight ? (
             <div className="game-card text-center space-y-3 bg-red-500/20 border-red-400">
               <div className="text-5xl">🎭</div>
-              <p className="text-2xl font-bold text-red-200">첫날 밤에는 행동할 수 없습니다</p>
-              <p className="text-white/70 text-lg">
-                아직 시민 회의가 시작되기 전입니다. 모든 특수 역할은 오늘 밤 조용히 기다립니다.
-              </p>
+              <p className="text-2xl font-bold text-red-200">첫날 밤에는 행동하지 않습니다</p>
+              <p className="text-white/70 text-lg">{firstNightMessage}</p>
             </div>
           ) : hasSubmittedAction ? (
             <div className="game-card text-center space-y-3 bg-green-500/20 border-green-400">
@@ -596,6 +633,15 @@ export default function StudentRoomPage() {
         <div className="space-y-4">
           <NarratorMessage message="게임이 종료되었습니다. 승리한 팀을 확인해 봅시다." />
 
+          <a href="/" className="block">
+            <button
+              className="btn-primary w-full text-2xl py-5"
+              style={{ fontFamily: '"Black Han Sans", sans-serif', letterSpacing: 0 }}
+            >
+              🏠 메인화면으로 돌아가기
+            </button>
+          </a>
+
           {room.winner && (
             <div
               className={`game-card text-center space-y-5 border-2 ${
@@ -621,14 +667,7 @@ export default function StudentRoomPage() {
                     : '아쉽게도 당신의 팀이 졌습니다.'}
                 </p>
               )}
-              <a href="/" className="block pt-2">
-                <button
-                  className="btn-primary w-full text-2xl py-5"
-                  style={{ fontFamily: '"Black Han Sans", sans-serif', letterSpacing: 0 }}
-                >
-                  🏠 메인화면으로 돌아가기
-                </button>
-              </a>
+
             </div>
           )}
 
