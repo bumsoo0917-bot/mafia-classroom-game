@@ -10,10 +10,11 @@ import {
   orderBy,
   query,
 } from 'firebase/firestore';
-import { Room, Player, PublicPlayer, GameLog } from '@/types/game';
+import { Room, Player, PublicPlayer, GameLog, GamePhase } from '@/types/game';
 import PhaseBanner from '@/components/PhaseBanner';
 import GameCodeDisplay from '@/components/GameCodeDisplay';
 import PageBackground, { getPhaseBackground } from '@/components/PageBackground';
+import Timer from '@/components/Timer';
 
 const roleLabels: Record<string, string> = {
   mafia: '🎭 마피아',
@@ -28,6 +29,137 @@ const roleColors: Record<string, string> = {
   doctor: 'bg-green-500/20 border-green-400 text-green-200',
   citizen: 'bg-slate-500/20 border-slate-400 text-slate-200',
 };
+
+const phaseProgressInfo: Record<GamePhase, { label: string; description: string; nextAction: string }> = {
+  waiting: {
+    label: '학생 입장 대기',
+    description: '학생들이 게임 코드로 입장하는 단계입니다.',
+    nextAction: '인원이 모이면 게임 시작을 누르세요.',
+  },
+  roleReveal: {
+    label: '역할 확인',
+    description: '학생들이 자신의 역할과 팀 정보를 확인하는 단계입니다.',
+    nextAction: '모두 확인한 뒤 첫날 밤으로 넘기세요.',
+  },
+  night: {
+    label: '밤 행동',
+    description: '역할별 밤 행동이 진행되는 단계입니다.',
+    nextAction: '행동 제출이 끝나면 밤 결과로 넘기세요.',
+  },
+  nightResult: {
+    label: '밤 결과 발표',
+    description: '밤 사이 일어난 결과를 확인하는 단계입니다.',
+    nextAction: '결과 확인 후 낮 토론으로 넘기세요.',
+  },
+  dayDiscussion: {
+    label: '낮 토론',
+    description: '학생들이 마피아를 찾기 위해 토론하는 단계입니다.',
+    nextAction: '시간이 끝나면 투표 단계로 넘기세요.',
+  },
+  voting: {
+    label: '투표',
+    description: '학생들이 마피아라고 생각하는 사람에게 투표하는 단계입니다.',
+    nextAction: '투표 시간이 끝나면 결과를 진행하세요.',
+  },
+  finalDefense: {
+    label: '최후변론',
+    description: '최다 득표자가 마지막으로 변론하는 단계입니다.',
+    nextAction: '시간이 끝나면 최종 투표로 넘기세요.',
+  },
+  finalVote: {
+    label: '최종 투표',
+    description: '추방할지 살릴지 최종 결정하는 단계입니다.',
+    nextAction: '투표 시간이 끝나면 최종 결과를 발표하세요.',
+  },
+  voteResult: {
+    label: '투표 결과',
+    description: '투표 결과와 추방 여부를 확인하는 단계입니다.',
+    nextAction: '결과 확인 후 다음 밤으로 넘기세요.',
+  },
+  ended: {
+    label: '게임 종료',
+    description: '승리 팀이 결정되어 게임이 끝난 상태입니다.',
+    nextAction: '다음 게임은 메인화면에서 새로 시작하세요.',
+  },
+};
+
+const phaseFlow: GamePhase[] = [
+  'roleReveal',
+  'night',
+  'nightResult',
+  'dayDiscussion',
+  'voting',
+  'finalDefense',
+  'finalVote',
+  'voteResult',
+  'ended',
+];
+
+function getPhaseDuration(room: Room): number | null {
+  if (room.currentPhase === 'dayDiscussion') return room.settings.discussionTime;
+  if (room.currentPhase === 'voting') return room.settings.voteTime;
+  if (room.currentPhase === 'finalDefense') return room.settings.finalDefenseTime;
+  if (room.currentPhase === 'finalVote') return room.settings.finalVoteTime;
+  return null;
+}
+
+function TeacherProgressPanel({ room }: { room: Room }) {
+  const phaseInfo = phaseProgressInfo[room.currentPhase];
+  const durationSeconds = getPhaseDuration(room);
+
+  return (
+    <div className="game-card bg-black/45 border-cyan-400/30 space-y-5">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+        <div className="space-y-3">
+          <p className="text-white/45 text-xs font-black tracking-widest uppercase">진행 현황</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <PhaseBanner phase={room.currentPhase} dayNumber={room.dayNumber} />
+            <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-bold text-white/70">
+              {room.dayNumber}일차
+            </span>
+          </div>
+          <div>
+            <h2 className="text-3xl font-black text-white">{phaseInfo.label}</h2>
+            <p className="mt-1 text-white/65 text-lg">{phaseInfo.description}</p>
+          </div>
+          <p className="rounded-xl border border-amber-400/25 bg-amber-500/10 px-4 py-3 text-amber-100 font-bold">
+            {phaseInfo.nextAction}
+          </p>
+        </div>
+
+        <div className="lg:w-80">
+          {durationSeconds ? (
+            <Timer durationSeconds={durationSeconds} phaseStartedAt={room.phaseStartedAt} />
+          ) : (
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center space-y-2">
+              <p className="text-white/50 font-bold text-sm tracking-widest uppercase">남은 시간</p>
+              <div className="text-3xl font-black text-white/80">교사 진행</div>
+              <p className="text-white/50 text-sm">이 단계는 시간 제한 없이 교사가 넘깁니다.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {phaseFlow.map((phase) => {
+          const active = phase === room.currentPhase;
+          return (
+            <span
+              key={phase}
+              className={`rounded-full border px-3 py-1.5 text-sm font-bold ${
+                active
+                  ? 'border-cyan-300 bg-cyan-400/25 text-cyan-100'
+                  : 'border-white/10 bg-white/5 text-white/45'
+              }`}
+            >
+              {phaseProgressInfo[phase].label}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 function TeacherAmbientAudio() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(45);
@@ -227,6 +359,8 @@ export default function TeacherRoomPage() {
 
         {/* Game Code - very large for projector */}
         <GameCodeDisplay gameCode={room.gameCode} />
+
+        <TeacherProgressPanel room={room} />
 
         <TeacherAmbientAudio />
 

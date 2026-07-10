@@ -217,6 +217,21 @@ export default function StudentRoomPage() {
         image={getPhaseBackground(room.currentPhase, room.winner)}
         overlay={room.currentPhase === 'night' ? 'darker' : 'dark'}
       />
+
+      {room.currentPhase === 'ended' && (
+        <a
+          href="/"
+          className="fixed left-4 right-4 bottom-5 z-50 flex items-center justify-center rounded-2xl px-6 py-5 text-2xl text-white shadow-2xl transition-all active:scale-95 md:left-1/2 md:right-auto md:w-[520px] md:-translate-x-1/2"
+          style={{
+            fontFamily: '"Black Han Sans", sans-serif',
+            letterSpacing: 0,
+            background: 'linear-gradient(135deg, #b45309, #f59e0b)',
+            boxShadow: '0 10px 36px rgba(0,0,0,0.45), 0 4px 28px rgba(217,119,6,0.45)',
+          }}
+        >
+          🏠 메인화면으로 돌아가기
+        </a>
+      )}
       {showFirstNightStory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-2xl game-card bg-amber-500/20 border-2 border-amber-400 text-center space-y-6 animate-pulse-glow">
@@ -630,17 +645,8 @@ export default function StudentRoomPage() {
 
       {/* ENDED */}
       {room.currentPhase === 'ended' && (
-        <div className="space-y-4">
+        <div className="space-y-4 pb-28">
           <NarratorMessage message="게임이 종료되었습니다. 승리한 팀을 확인해 봅시다." />
-
-          <a href="/" className="block">
-            <button
-              className="btn-primary w-full text-2xl py-5"
-              style={{ fontFamily: '"Black Han Sans", sans-serif', letterSpacing: 0 }}
-            >
-              🏠 메인화면으로 돌아가기
-            </button>
-          </a>
 
           {room.winner && (
             <div
@@ -689,9 +695,6 @@ export default function StudentRoomPage() {
             </div>
           </div>
 
-          <a href="/" className="block">
-            <button className="btn-secondary w-full">🏠 메인으로 돌아가기</button>
-          </a>
         </div>
       )}
     </main>
