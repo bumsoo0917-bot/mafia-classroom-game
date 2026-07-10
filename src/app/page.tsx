@@ -32,8 +32,12 @@ export default function Home() {
         <div className="space-y-4">
           <div>
             <h1
-              className="text-6xl md:text-7xl text-white leading-tight tracking-tight"
-              style={{ fontFamily: '"Black Han Sans", sans-serif', textShadow: '0 0 40px rgba(167,139,250,0.5)' }}
+              className="text-6xl md:text-7xl text-white leading-tight"
+              style={{
+                fontFamily: '"Song Myung", "Black Han Sans", serif',
+                letterSpacing: 0,
+                textShadow: '0 0 34px rgba(167,139,250,0.62), 0 8px 28px rgba(0,0,0,0.72)',
+              }}
             >
               교실 마피아
             </h1>
@@ -41,6 +45,7 @@ export default function Home() {
               className="text-3xl md:text-4xl mt-1"
               style={{
                 fontFamily: '"Black Han Sans", sans-serif',
+                letterSpacing: 0,
                 background: 'linear-gradient(90deg, #a78bfa, #f472b6, #fb923c)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -49,8 +54,11 @@ export default function Home() {
               추리 게임
             </h2>
           </div>
-          <p className="text-white/40 text-base tracking-widest uppercase font-medium">
-            ── 마을에 숨어든 마피아를 찾아라 ──
+          <p
+            className="text-amber-100/70 text-lg md:text-xl font-medium"
+            style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
+          >
+            마을에 숨어든 마피아를 찾아라
           </p>
         </div>
 
@@ -94,6 +102,7 @@ export default function Home() {
               className="w-full flex items-center justify-center gap-3 py-5 px-8 rounded-2xl text-2xl transition-all duration-200 hover:scale-105 active:scale-95 text-white"
               style={{
                 fontFamily: '"Black Han Sans", sans-serif',
+                letterSpacing: 0,
                 background: 'linear-gradient(135deg, #b45309, #f59e0b)',
                 boxShadow: '0 4px 28px rgba(217,119,6,0.45)',
               }}
@@ -108,6 +117,7 @@ export default function Home() {
               className="w-full flex items-center justify-center gap-3 py-5 px-8 rounded-2xl text-2xl transition-all duration-200 hover:scale-105 active:scale-95 text-white"
               style={{
                 fontFamily: '"Black Han Sans", sans-serif',
+                letterSpacing: 0,
                 background: 'linear-gradient(135deg, #0e7490, #06b6d4)',
                 boxShadow: '0 4px 28px rgba(6,182,212,0.4)',
               }}

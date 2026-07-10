@@ -268,12 +268,20 @@ export default function StudentRoomPage() {
             </div>
           </div>
 
-          <div className="game-card bg-amber-500/20 border-amber-400 space-y-3">
-            <p className="text-2xl font-black text-amber-200">마을에 수상한 밤이 찾아왔습니다</p>
-            <p className="text-white/80 leading-relaxed">
-              평화롭던 {room.roomName} 마을에 마피아가 숨어들었다는 소문이 퍼졌습니다. 시민들은 서로의 표정을 살피며,
-              날이 밝으면 모두 모여 누가 마피아인지 회의를 열기로 했습니다. 하지만 아직 첫 회의가 시작되기 전,
-              마피아는 정체를 드러낼 수 없어 오늘 밤 아무도 공격하지 못합니다.
+          <div className="game-card bg-amber-500/20 border-amber-400 space-y-4 text-center">
+            <p
+              className="text-3xl md:text-4xl text-amber-100 text-glow-white"
+              style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
+            >
+              마을에 수상한 밤이 찾아왔습니다
+            </p>
+            <p
+              className="text-xl md:text-2xl text-white/85 leading-relaxed text-balance"
+              style={{ fontFamily: '"Song Myung", serif', letterSpacing: 0 }}
+            >
+              평화롭던 {room.roomName} 마을에 마피아가 숨어들었다는 소문이 퍼졌습니다.
+              시민들은 서로의 표정을 살피며, 날이 밝으면 모두 모여 누가 마피아인지 첫 회의를 열기로 했습니다.
+              하지만 아직 첫 회의가 시작되기 전, 마피아는 정체를 드러낼 수 없어 오늘 밤 아무도 공격하지 못합니다.
             </p>
           </div>
 
@@ -590,23 +598,37 @@ export default function StudentRoomPage() {
 
           {room.winner && (
             <div
-              className={`game-card text-center space-y-4 ${
+              className={`game-card text-center space-y-5 border-2 ${
                 room.winner === 'citizen'
-                  ? 'bg-blue-500/20 border-2 border-blue-400'
-                  : 'bg-red-500/20 border-2 border-red-400'
+                  ? 'bg-blue-500/20 border-blue-400'
+                  : 'bg-red-500/20 border-red-400'
               }`}
             >
-              <div className="text-7xl">{room.winner === 'citizen' ? '🏆' : '🎭'}</div>
-              <h2 className="text-4xl font-black text-white">
+              <div className="inline-flex mx-auto px-4 py-1 rounded-full border border-white/20 bg-black/25 text-white/60 text-sm font-black">
+                GAME OVER
+              </div>
+              <div className="text-7xl animate-float">{room.winner === 'citizen' ? '🏆' : '🎭'}</div>
+              <h2
+                className={`text-5xl font-black text-white ${room.winner === 'citizen' ? 'text-glow-blue' : 'text-glow-red'}`}
+                style={{ fontFamily: '"Black Han Sans", sans-serif', letterSpacing: 0 }}
+              >
                 {room.winner === 'citizen' ? '시민팀 승리!' : '마피아팀 승리!'}
               </h2>
               {myPlayer && (
-                <p className="text-xl text-white/70">
+                <p className="text-xl font-bold text-white/80 leading-relaxed">
                   {(myPlayer.team === room.winner)
                     ? '🎉 축하합니다! 당신의 팀이 이겼습니다!'
                     : '아쉽게도 당신의 팀이 졌습니다.'}
                 </p>
               )}
+              <a href="/" className="block pt-2">
+                <button
+                  className="btn-primary w-full text-2xl py-5"
+                  style={{ fontFamily: '"Black Han Sans", sans-serif', letterSpacing: 0 }}
+                >
+                  🏠 메인화면으로 돌아가기
+                </button>
+              </a>
             </div>
           )}
 
@@ -629,7 +651,7 @@ export default function StudentRoomPage() {
           </div>
 
           <a href="/" className="block">
-            <button className="btn-primary w-full">🏠 메인으로 돌아가기</button>
+            <button className="btn-secondary w-full">🏠 메인으로 돌아가기</button>
           </a>
         </div>
       )}

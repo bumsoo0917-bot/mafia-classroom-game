@@ -342,6 +342,11 @@ export default function TeacherRoomPage() {
             <h2 className="text-4xl font-black text-white">
               {room.winner === 'citizen' ? '시민팀 승리!' : '마피아팀 승리!'}
             </h2>
+            <a href="/" className="block mt-6">
+              <button className="btn-primary w-full md:w-auto md:px-10">
+                🏠 메인화면으로 돌아가기
+              </button>
+            </a>
           </div>
         )}
 
