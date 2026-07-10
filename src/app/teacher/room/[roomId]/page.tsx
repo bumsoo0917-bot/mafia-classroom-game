@@ -390,7 +390,7 @@ export default function TeacherRoomPage() {
         {/* Result Message */}
         {room.lastResultMessage && (
           <div className="game-card bg-amber-500/20 border-amber-400 text-center py-6">
-            <p className="text-2xl font-bold text-amber-200">{room.lastResultMessage}</p>
+            <p className="text-2xl font-bold text-amber-200 whitespace-pre-line">{room.lastResultMessage}</p>
           </div>
         )}
 

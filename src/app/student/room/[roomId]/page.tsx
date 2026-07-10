@@ -458,7 +458,7 @@ export default function StudentRoomPage() {
           {room.lastResultMessage && (
             <div className="game-card text-center space-y-3 bg-amber-500/20 border-amber-400">
               <div className="text-5xl">🌅</div>
-              <p className="text-2xl font-bold text-amber-200">{room.lastResultMessage}</p>
+              <p className="text-2xl font-bold text-amber-200 whitespace-pre-line">{room.lastResultMessage}</p>
             </div>
           )}
         </div>
@@ -650,7 +650,7 @@ export default function StudentRoomPage() {
           {room.lastResultMessage && (
             <div className="game-card text-center space-y-3 bg-purple-500/20 border-purple-400">
               <div className="text-5xl">📋</div>
-              <p className="text-2xl font-bold text-purple-200">{room.lastResultMessage}</p>
+              <p className="text-2xl font-bold text-purple-200 whitespace-pre-line">{room.lastResultMessage}</p>
             </div>
           )}
         </div>

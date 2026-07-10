@@ -273,13 +273,25 @@ export async function POST(req: NextRequest) {
         const playerRef = adminDb.collection('rooms').doc(roomId).collection('players').doc(targetId);
         const publicPlayerRef = adminDb.collection('rooms').doc(roomId).collection('publicPlayers').doc(targetId);
         const targetSnap = await playerRef.get();
-        const roleText = roomData.settings?.revealRoleOnDeath && targetSnap.exists
-          ? ` (역할: ${targetSnap.data()?.role === 'mafia' ? '마피아' : targetSnap.data()?.role === 'police' ? '경찰' : targetSnap.data()?.role === 'doctor' ? '의사' : '시민'})`
-          : '';
+        const targetRole = targetSnap.exists ? targetSnap.data()?.role : null;
+        const targetName = targetNickname ?? '알 수 없음';
+        const verdictMessage = targetRole === 'mafia'
+          ? `악랄한 마피아로 의심받아 억울해 하던 ${targetName}님은 마피아가 맞습니다.`
+          : `악랄한 마피아로 의심받던 억울한 시민 ${targetName}님은 시민이었습니다.`;
+        const playersAfterVoteSnap = await adminDb
+          .collection('rooms')
+          .doc(roomId)
+          .collection('players')
+          .get();
+        const remainingPlayers = playersAfterVoteSnap.docs
+          .map((d) => ({ id: d.id, ...d.data() } as Player))
+          .filter((p) => p.isAlive && p.id !== targetId);
+        const remainingMafiaCount = remainingPlayers.filter((p) => p.team === 'mafia').length;
+        const remainingCitizenCount = remainingPlayers.filter((p) => p.team === 'citizen').length;
         batch.update(playerRef, { isAlive: false });
         batch.update(publicPlayerRef, { isAlive: false });
         eliminatedByVoteId = targetId;
-        resultMessage = `최종 투표 결과 ${targetNickname}님이 추방되었습니다.${roleText} (추방 ${eliminateCount}표 vs 석방 ${saveCount}표)`;
+        resultMessage = `${verdictMessage}\n추방 ${eliminateCount}표 vs 석방 ${saveCount}표\n남은 인원: 시민 ${remainingCitizenCount}명, 마피아 ${remainingMafiaCount}명`;
       } else if (targetId) {
         // 석방
         resultMessage = `최종 투표 결과 ${targetNickname}님이 석방되었습니다. (추방 ${eliminateCount}표 vs 석방 ${saveCount}표)`;
