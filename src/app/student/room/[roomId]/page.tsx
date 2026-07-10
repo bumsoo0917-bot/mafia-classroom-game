@@ -240,8 +240,9 @@ export default function StudentRoomPage() {
       {room.currentPhase === 'ended' && (
         <a
           href="/"
-          className="fixed left-4 right-4 bottom-5 z-50 flex items-center justify-center rounded-2xl px-6 py-5 text-2xl text-white shadow-2xl transition-all active:scale-95 md:left-1/2 md:right-auto md:w-[520px] md:-translate-x-1/2"
+          className="fixed left-4 right-4 bottom-5 flex items-center justify-center rounded-2xl px-6 py-5 text-2xl text-white shadow-2xl transition-all active:scale-95 md:left-1/2 md:right-auto md:w-[520px] md:-translate-x-1/2"
           style={{
+            zIndex: 9999,
             fontFamily: '"Black Han Sans", sans-serif',
             letterSpacing: 0,
             background: 'linear-gradient(135deg, #b45309, #f59e0b)',
@@ -659,6 +660,19 @@ export default function StudentRoomPage() {
       {room.currentPhase === 'ended' && (
         <div className="space-y-4 pb-28">
           <NarratorMessage message="게임이 종료되었습니다. 승리한 팀을 확인해 봅시다." />
+
+          <a
+            href="/"
+            className="block rounded-2xl px-6 py-5 text-center text-2xl text-white shadow-2xl transition-all active:scale-95"
+            style={{
+              fontFamily: '"Black Han Sans", sans-serif',
+              letterSpacing: 0,
+              background: 'linear-gradient(135deg, #b45309, #f59e0b)',
+              boxShadow: '0 8px 28px rgba(217,119,6,0.45)',
+            }}
+          >
+            🏠 메인화면으로 돌아가기
+          </a>
 
           {room.winner && (
             <div
