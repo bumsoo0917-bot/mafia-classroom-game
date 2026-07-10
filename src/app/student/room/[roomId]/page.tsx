@@ -211,6 +211,25 @@ export default function StudentRoomPage() {
     </div>
   ) : null;
 
+  if (myPlayer && !isAlive && room.currentPhase !== 'ended') {
+    return (
+      <main
+        className="min-h-screen flex items-center justify-center p-6"
+        style={{ position: 'relative', zIndex: 1 }}
+      >
+        <PageBackground
+          image={getPhaseBackground(room.currentPhase, room.winner)}
+          overlay={room.currentPhase === 'night' ? 'darker' : 'dark'}
+        />
+        <div className="game-card bg-black/60 border-white/20 text-center px-8 py-10">
+          <p className="text-3xl md:text-4xl font-black text-white">
+            탈락자는 조용히 관전합니다.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen p-4 md:p-8 max-w-2xl mx-auto space-y-6" style={{ position: 'relative', zIndex: 1 }}>
       <PageBackground
@@ -277,13 +296,6 @@ export default function StudentRoomPage() {
         </div>
       )}
 
-      {/* Dead player banner */}
-      {myPlayer && !isAlive && (
-        <div className="bg-black/50 border border-white/20 rounded-2xl p-4 text-center">
-          <p className="text-2xl font-bold text-white/50">💀 관전 모드입니다</p>
-          <p className="text-white/30">탈락했지만 게임을 계속 관전할 수 있습니다</p>
-        </div>
-      )}
 
       {/* Phase banner */}
       <PhaseBanner phase={room.currentPhase} dayNumber={room.dayNumber} />
