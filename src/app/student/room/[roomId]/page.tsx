@@ -51,6 +51,7 @@ export default function StudentRoomPage() {
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState('');
   const [hasSeenFirstNightStory, setHasSeenFirstNightStory] = useState(false);
+  const [hasSeenEndStory, setHasSeenEndStory] = useState(false);
 
   const uid = auth.currentUser?.uid ?? '';
 
@@ -92,6 +93,7 @@ export default function StudentRoomPage() {
     setSelectedTarget(null);
     setActionError('');
     setHasSeenFirstNightStory(false);
+    setHasSeenEndStory(false);
   }, [room?.currentPhase, room?.dayNumber]);
 
   const submitNightAction = async () => {
@@ -195,6 +197,11 @@ export default function StudentRoomPage() {
   const alivePlayers = publicPlayers.filter((p) => p.isAlive);
   const isFirstNight = room.currentPhase === 'night' && room.dayNumber === 1;
   const showFirstNightStory = isFirstNight && !hasSeenFirstNightStory;
+  const showEndStory = room.currentPhase === 'ended' && !hasSeenEndStory;
+  const endStoryTitle = room.winner === 'mafia' ? '마피아의 밤이 끝났습니다.' : '마지막 의심이 걷혔습니다.';
+  const endStoryMessage = room.winner === 'mafia'
+    ? `어둠은 끝내 ${room.roomName} 마을을 삼켰습니다.\n시민들의 목소리는 하나둘 사라지고, 정체를 숨긴 마피아가 교실의 마지막 아침을 맞이했습니다.\n\n이제 모두가 진실을 확인할 시간입니다.`
+    : `길고 긴 의심의 시간 끝에 ${room.roomName} 마을의 시민들은 마지막 단서를 붙잡았습니다.\n서로를 의심하던 시선 사이로 진실이 드러나고, 숨어 있던 마피아의 그림자가 걷히기 시작했습니다.\n\n이제 모두가 진실을 확인할 시간입니다.`;
   const firstNightMessage = myPlayer?.role === 'mafia'
     ? '오늘 밤은 공격하지 않습니다. 정체를 숨기고 기다리세요.'
     : myPlayer?.role === 'police'
@@ -237,7 +244,7 @@ export default function StudentRoomPage() {
         overlay={room.currentPhase === 'night' ? 'darker' : 'dark'}
       />
 
-      {room.currentPhase === 'ended' && (
+      {room.currentPhase === 'ended' && !showEndStory && (
         <a
           href="/"
           className="fixed left-4 right-4 bottom-5 flex items-center justify-center rounded-2xl px-6 py-5 text-2xl text-white shadow-2xl transition-all active:scale-95 md:left-1/2 md:right-auto md:w-[520px] md:-translate-x-1/2"
@@ -252,6 +259,33 @@ export default function StudentRoomPage() {
           🏠 메인화면으로 돌아가기
         </a>
       )}
+      {showEndStory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+          <div className="w-full max-w-2xl game-card bg-black/65 border-2 border-amber-400 text-center space-y-6 animate-pulse-glow">
+            <p
+              className="text-4xl md:text-5xl text-amber-100 text-glow-white"
+              style={{ fontFamily: '"Hahmlet", serif', fontWeight: 800, letterSpacing: 0 }}
+            >
+              {endStoryTitle}
+            </p>
+            <p
+              className="text-xl md:text-2xl text-white/85 leading-relaxed whitespace-pre-line"
+              style={{ fontFamily: '"Hahmlet", serif', fontWeight: 600, letterSpacing: 0 }}
+            >
+              {endStoryMessage}
+            </p>
+            <button
+              type="button"
+              onClick={() => setHasSeenEndStory(true)}
+              className="btn-primary w-full text-2xl py-5"
+              style={{ fontFamily: '"Black Han Sans", sans-serif', letterSpacing: 0 }}
+            >
+              결과 확인
+            </button>
+          </div>
+        </div>
+      )}
+
       {showFirstNightStory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-2xl game-card bg-amber-500/20 border-2 border-amber-400 text-center space-y-6 animate-pulse-glow">
@@ -657,7 +691,7 @@ export default function StudentRoomPage() {
       )}
 
       {/* ENDED */}
-      {room.currentPhase === 'ended' && (
+      {room.currentPhase === 'ended' && !showEndStory && (
         <div className="space-y-4 pb-28">
           <NarratorMessage message="게임이 종료되었습니다. 승리한 팀을 확인해 봅시다." />
 

@@ -86,6 +86,23 @@ export async function POST(req: NextRequest) {
       return checkWinCondition(allPlayers);
     };
 
+    const getRemainingTeamCounts = async (excludedPlayerId: string | null = null) => {
+      const playersSnap = await adminDb
+        .collection('rooms')
+        .doc(roomId)
+        .collection('players')
+        .get();
+
+      const remainingPlayers: Player[] = playersSnap.docs
+        .map((d) => ({ id: d.id, ...d.data() } as Player))
+        .filter((p) => p.isAlive && p.id !== excludedPlayerId);
+
+      return {
+        citizen: remainingPlayers.filter((p) => p.team === 'citizen').length,
+        mafia: remainingPlayers.filter((p) => p.team === 'mafia').length,
+      };
+    };
+
     if (currentPhase === 'roleReveal') {
       nextPhase = 'night';
       updateData.lastResultMessage = null;
@@ -143,17 +160,19 @@ export async function POST(req: NextRequest) {
           batch.update(publicPlayerRef, { isAlive: false });
 
           const roleText = roomData.settings?.revealRoleOnDeath
-            ? ` (역할: ${eliminatedData.role === 'mafia' ? '마피아' : eliminatedData.role === 'police' ? '경찰' : eliminatedData.role === 'doctor' ? '의사' : '시민'})`
+            ? `\n역할: ${eliminatedData.role === 'mafia' ? '마피아' : eliminatedData.role === 'police' ? '경찰' : eliminatedData.role === 'doctor' ? '의사' : '시민'}`
             : '';
+          const remainingCounts = await getRemainingTeamCounts(eliminatedId);
 
-          resultMessage = `어젯밤 ${eliminatedData.nickname}님이 탈락했습니다.${roleText}`;
+          resultMessage = `깊은 밤, 마피아의 그림자가 ${eliminatedData.nickname}님을 덮쳤습니다.\n${eliminatedData.nickname}님은 아침이 밝기 전 조용히 사라졌습니다.\n남은 인원: 시민 ${remainingCounts.citizen}명, 마피아 ${remainingCounts.mafia}명${roleText}`;
         } else {
           resultMessage = '어젯밤 아무 일도 일어나지 않았습니다.';
         }
       } else if (dayNumber === 1) {
         resultMessage = '첫날 밤은 아직 시민 회의가 시작되기 전이라 아무도 탈락하지 않았습니다.';
       } else if (mafiaTargetId && mafiaTargetId === doctorTargetId) {
-        resultMessage = '어젯밤 아무도 탈락하지 않았습니다. (의사가 구했습니다!)';
+        const remainingCounts = await getRemainingTeamCounts();
+        resultMessage = `밤새 차가운 기운이 교실 마을을 덮쳤습니다.\n마피아의 칼끝은 분명 누군가를 향했습니다.\n\n그러나 의사가 한발 먼저 움직였습니다.\n아침이 밝았고, 아무도 사라지지 않았습니다.\n\n남은 인원: 시민 ${remainingCounts.citizen}명, 마피아 ${remainingCounts.mafia}명`;
       } else {
         resultMessage = '어젯밤 아무 일도 일어나지 않았습니다.';
       }
