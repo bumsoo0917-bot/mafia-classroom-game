@@ -191,6 +191,15 @@ export default function StudentRoomPage() {
 
   const isAlive = myPlayer?.isAlive ?? true;
   const alivePlayers = publicPlayers.filter((p) => p.isAlive);
+  const isFirstNight = room.currentPhase === 'night' && room.dayNumber === 1;
+  const policeResultCard = myPlayer?.role === 'police' && myPlayer.policeLastResult ? (
+    <div className="game-card bg-blue-500/20 border-blue-400 text-center space-y-3">
+      <div className="text-5xl">🔍</div>
+      <p className="text-blue-200 font-bold text-lg">조사 결과</p>
+      <p className="text-white text-2xl font-black">{myPlayer.policeLastResult}</p>
+      <p className="text-white/50">이 결과는 경찰에게만 보입니다.</p>
+    </div>
+  ) : null;
 
   return (
     <main className="min-h-screen p-4 md:p-8 max-w-2xl mx-auto space-y-6" style={{ position: 'relative', zIndex: 1 }}>
@@ -259,6 +268,15 @@ export default function StudentRoomPage() {
             </div>
           </div>
 
+          <div className="game-card bg-amber-500/20 border-amber-400 space-y-3">
+            <p className="text-2xl font-black text-amber-200">마을에 수상한 밤이 찾아왔습니다</p>
+            <p className="text-white/80 leading-relaxed">
+              평화롭던 교실 마을에 마피아가 숨어들었다는 소문이 퍼졌습니다. 시민들은 서로의 표정을 살피며,
+              날이 밝으면 모두 모여 누가 마피아인지 회의를 열기로 했습니다. 하지만 아직 첫 회의가 시작되기 전,
+              마피아는 정체를 드러낼 수 없어 오늘 밤 아무도 공격하지 못합니다.
+            </p>
+          </div>
+
           {myPlayer.role === 'mafia' && myPlayer.mafiaTeamIds && myPlayer.mafiaTeamIds.length > 1 && (
             <div className="game-card bg-red-500/20 border-red-400 space-y-3">
               <p className="font-bold text-red-300 text-lg">🎭 마피아 동료</p>
@@ -292,17 +310,22 @@ export default function StudentRoomPage() {
               <p className="text-2xl font-bold text-white">밤입니다</p>
               <p className="text-white/60 text-lg">시민은 조용히 기다려 주세요</p>
             </div>
+          ) : myPlayer.role === 'mafia' && isFirstNight ? (
+            <div className="game-card text-center space-y-3 bg-red-500/20 border-red-400">
+              <div className="text-5xl">🎭</div>
+              <p className="text-2xl font-bold text-red-200">첫날 밤에는 공격할 수 없습니다</p>
+              <p className="text-white/70 text-lg">
+                아직 시민 회의가 시작되기 전입니다. 마피아는 오늘 밤 정체를 숨기고 조용히 기다립니다.
+              </p>
+            </div>
           ) : hasSubmittedAction ? (
             <div className="game-card text-center space-y-3 bg-green-500/20 border-green-400">
               <div className="text-5xl">✅</div>
               <p className="text-2xl font-bold text-green-300">제출 완료!</p>
               <p className="text-white/60">다른 친구들을 기다리는 중입니다</p>
 
-              {myPlayer.role === 'police' && myPlayer.policeLastResult && (
-                <div className="bg-blue-500/20 border border-blue-400 rounded-xl p-4 mt-4">
-                  <p className="text-blue-300 font-bold text-lg">🔍 조사 결과</p>
-                  <p className="text-white text-2xl font-black mt-2">{myPlayer.policeLastResult}</p>
-                </div>
+              {myPlayer.role === 'police' && (
+                <p className="text-blue-200">조사 결과는 아침 결과 화면에서 확인할 수 있습니다.</p>
               )}
             </div>
           ) : (
@@ -318,7 +341,10 @@ export default function StudentRoomPage() {
                     if (myPlayer.role === 'mafia') {
                       return !myPlayer.mafiaTeamIds?.includes(p.id);
                     }
-                    return p.id !== uid;
+                    if (myPlayer.role === 'police') {
+                      return p.id !== uid;
+                    }
+                    return true;
                   })
                   .map((p) => (
                     <button
@@ -355,6 +381,7 @@ export default function StudentRoomPage() {
       {room.currentPhase === 'nightResult' && (
         <div className="space-y-4">
           <NarratorMessage message="아침이 되었습니다. 어젯밤의 결과를 확인합니다." />
+          {policeResultCard}
           {room.lastResultMessage && (
             <div className="game-card text-center space-y-3 bg-amber-500/20 border-amber-400">
               <div className="text-5xl">🌅</div>
@@ -368,6 +395,7 @@ export default function StudentRoomPage() {
       {room.currentPhase === 'dayDiscussion' && (
         <div className="space-y-4">
           <NarratorMessage message="낮 토론 시간입니다. 누가 마피아일지 근거를 들어 이야기해 봅시다." />
+          {policeResultCard}
 
           <Timer
             durationSeconds={room.settings.discussionTime}

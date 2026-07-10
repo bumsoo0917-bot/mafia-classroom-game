@@ -124,6 +124,8 @@ export default function TeacherRoomPage() {
 
   const alivePlayers = publicPlayers.filter((p) => p.isAlive);
   const deadPlayers = publicPlayers.filter((p) => !p.isAlive);
+  const canStartGame = publicPlayers.length >= 4 && !loading;
+  const nextPhaseButtonLabel = room.currentPhase === 'roleReveal' ? '🌙 첫날 밤 시작' : '⏭️ 다음 단계';
 
   return (
     <main className="min-h-screen p-4 md:p-8" style={{ position: 'relative', zIndex: 1 }}>
@@ -143,6 +145,19 @@ export default function TeacherRoomPage() {
 
         {/* Game Code - very large for projector */}
         <GameCodeDisplay gameCode={room.gameCode} />
+
+        {room.currentPhase === 'waiting' && (
+          <div className="game-card bg-green-500/20 border-green-400 text-center space-y-4">
+            <p className="text-2xl font-black text-white">학생 입장이 끝나면 바로 시작할 수 있습니다</p>
+            <button
+              onClick={handleStartGame}
+              disabled={!canStartGame}
+              className="btn-success w-full text-2xl py-5"
+            >
+              {loading ? '처리 중...' : '🎮 게임 시작'}
+            </button>
+          </div>
+        )}
 
         {/* Final Defense Banner */}
         {(room.currentPhase === 'finalDefense' || room.currentPhase === 'finalVote') && room.finalDefenseTargetNickname && (
@@ -243,7 +258,7 @@ export default function TeacherRoomPage() {
           {room.currentPhase === 'waiting' && (
             <button
               onClick={handleStartGame}
-              disabled={loading || publicPlayers.length < 4}
+              disabled={!canStartGame}
               className="btn-success w-full"
             >
               {loading ? '처리 중...' : '🎮 게임 시작'}
@@ -256,7 +271,7 @@ export default function TeacherRoomPage() {
               disabled={loading}
               className="btn-primary w-full"
             >
-              {loading ? '처리 중...' : '⏭️ 다음 단계'}
+              {loading ? '처리 중...' : nextPhaseButtonLabel}
             </button>
           )}
 

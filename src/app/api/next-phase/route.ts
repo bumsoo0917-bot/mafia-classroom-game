@@ -50,9 +50,23 @@ export async function POST(req: NextRequest) {
       phaseStartedAt: FieldValue.serverTimestamp(),
     };
 
+    const clearPoliceResults = async () => {
+      const policeSnap = await adminDb
+        .collection('rooms')
+        .doc(roomId)
+        .collection('players')
+        .where('role', '==', 'police')
+        .get();
+
+      for (const policeDoc of policeSnap.docs) {
+        batch.update(policeDoc.ref, { policeLastResult: null });
+      }
+    };
+
     if (currentPhase === 'roleReveal') {
       nextPhase = 'night';
       updateData.lastResultMessage = null;
+      await clearPoliceResults();
       batch.set(logRef, {
         type: 'phaseChange',
         message: `${dayNumber}일차 밤이 시작되었습니다.`,
@@ -76,7 +90,7 @@ export async function POST(req: NextRequest) {
 
       for (const actionDoc of nightActionsSnap.docs) {
         const action = actionDoc.data();
-        if (action.actionType === 'mafiaKill') mafiaTargetId = action.targetPlayerId;
+        if (action.actionType === 'mafiaKill' && dayNumber !== 1) mafiaTargetId = action.targetPlayerId;
         if (action.actionType === 'doctorSave') doctorTargetId = action.targetPlayerId;
         if (action.actionType === 'policeCheck') {
           policeTargetId = action.targetPlayerId;
@@ -111,8 +125,12 @@ export async function POST(req: NextRequest) {
         } else {
           resultMessage = '어젯밤 아무 일도 일어나지 않았습니다.';
         }
-      } else {
+      } else if (dayNumber === 1) {
+        resultMessage = '첫날 밤은 아직 시민 회의가 시작되기 전이라 아무도 탈락하지 않았습니다.';
+      } else if (mafiaTargetId && mafiaTargetId === doctorTargetId) {
         resultMessage = '어젯밤 아무도 탈락하지 않았습니다. (의사가 구했습니다!)';
+      } else {
+        resultMessage = '어젯밤 아무 일도 일어나지 않았습니다.';
       }
 
       // Police check result
@@ -126,7 +144,7 @@ export async function POST(req: NextRequest) {
 
         if (targetSnap.exists) {
           const targetPlayer = { id: targetSnap.id, ...targetSnap.data() } as Player;
-          const checkResult = policeCheck(targetPlayer);
+          const checkResult = `${targetPlayer.nickname}님은 ${policeCheck(targetPlayer)}`;
           const policeRef = adminDb.collection('rooms').doc(roomId).collection('players').doc(policeActorId);
           batch.update(policeRef, { policeLastResult: checkResult });
         }
@@ -265,6 +283,7 @@ export async function POST(req: NextRequest) {
         nextPhase = 'night';
         updateData.dayNumber = dayNumber + 1;
         updateData.lastResultMessage = null;
+        await clearPoliceResults();
         batch.set(logRef, {
           type: 'phaseChange',
           message: `${dayNumber + 1}일차 밤이 시작되었습니다.`,

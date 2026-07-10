@@ -320,10 +320,10 @@ export default function CreateRoomPage() {
           <button
             type="submit"
             disabled={loading || citizenCount < 0 || !roomName.trim()}
-            className="btn-success w-full text-2xl py-5"
+            className="btn-success w-full text-2xl py-5 sticky bottom-4 z-20 shadow-2xl shadow-green-900/40"
             style={{ fontFamily: '"Black Han Sans", sans-serif' }}
           >
-            {loading ? '생성 중...' : '🎮 방 만들기'}
+            {loading ? '생성 중...' : '🎮 방 만들고 교사 대기실로 이동'}
           </button>
         </form>
 
