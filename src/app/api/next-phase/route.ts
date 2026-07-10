@@ -63,6 +63,29 @@ export async function POST(req: NextRequest) {
       }
     };
 
+    const getWinnerMessage = (winner: ReturnType<typeof checkWinCondition>) => {
+      if (winner === 'citizen') return '시민팀이 승리했습니다!';
+      if (winner === 'mafia') return '마피아팀이 승리했습니다!';
+      return null;
+    };
+
+    const checkWinnerAfterElimination = async (eliminatedPlayerId: string | null) => {
+      if (!eliminatedPlayerId) return null;
+
+      const allPlayersSnap = await adminDb
+        .collection('rooms')
+        .doc(roomId)
+        .collection('players')
+        .get();
+
+      const allPlayers: Player[] = allPlayersSnap.docs.map((d) => {
+        const player = { id: d.id, ...d.data() } as Player;
+        return player.id === eliminatedPlayerId ? { ...player, isAlive: false } : player;
+      });
+
+      return checkWinCondition(allPlayers);
+    };
+
     if (currentPhase === 'roleReveal') {
       nextPhase = 'night';
       updateData.lastResultMessage = null;
@@ -91,8 +114,8 @@ export async function POST(req: NextRequest) {
       for (const actionDoc of nightActionsSnap.docs) {
         const action = actionDoc.data();
         if (action.actionType === 'mafiaKill' && dayNumber !== 1) mafiaTargetId = action.targetPlayerId;
-        if (action.actionType === 'doctorSave') doctorTargetId = action.targetPlayerId;
-        if (action.actionType === 'policeCheck') {
+        if (action.actionType === 'doctorSave' && dayNumber !== 1) doctorTargetId = action.targetPlayerId;
+        if (action.actionType === 'policeCheck' && dayNumber !== 1) {
           policeTargetId = action.targetPlayerId;
           policeActorId = action.actorId;
         }
@@ -150,12 +173,28 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      updateData.lastResultMessage = resultMessage;
-      batch.set(logRef, {
-        type: 'nightResult',
-        message: resultMessage,
-        createdAt: FieldValue.serverTimestamp(),
-      });
+      const nightWinner = await checkWinnerAfterElimination(eliminatedId);
+      const nightWinnerMessage = getWinnerMessage(nightWinner);
+
+      if (nightWinner && nightWinnerMessage) {
+        const endMessage = `${resultMessage} ${nightWinnerMessage}`;
+        nextPhase = 'ended';
+        updateData.winner = nightWinner;
+        updateData.status = 'ended';
+        updateData.lastResultMessage = endMessage;
+        batch.set(logRef, {
+          type: 'gameEnd',
+          message: endMessage,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      } else {
+        updateData.lastResultMessage = resultMessage;
+        batch.set(logRef, {
+          type: 'nightResult',
+          message: resultMessage,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      }
     } else if (currentPhase === 'nightResult') {
       nextPhase = 'dayDiscussion';
       updateData.lastResultMessage = null;
@@ -225,6 +264,7 @@ export async function POST(req: NextRequest) {
       const targetNickname = roomData.finalDefenseTargetNickname as string | null;
 
       let resultMessage: string;
+      let eliminatedByVoteId: string | null = null;
 
       if (targetId && eliminateCount > saveCount) {
         // 추방 확정
@@ -236,6 +276,7 @@ export async function POST(req: NextRequest) {
           : '';
         batch.update(playerRef, { isAlive: false });
         batch.update(publicPlayerRef, { isAlive: false });
+        eliminatedByVoteId = targetId;
         resultMessage = `최종 투표 결과 ${targetNickname}님이 추방되었습니다.${roleText} (추방 ${eliminateCount}표 vs 석방 ${saveCount}표)`;
       } else if (targetId) {
         // 석방
@@ -244,14 +285,31 @@ export async function POST(req: NextRequest) {
         resultMessage = '최종 투표가 완료되었습니다.';
       }
 
-      updateData.lastResultMessage = resultMessage;
       updateData.finalDefenseTargetId = null;
       updateData.finalDefenseTargetNickname = null;
-      batch.set(logRef, {
-        type: 'voteResult',
-        message: resultMessage,
-        createdAt: FieldValue.serverTimestamp(),
-      });
+
+      const voteWinner = await checkWinnerAfterElimination(eliminatedByVoteId);
+      const voteWinnerMessage = getWinnerMessage(voteWinner);
+
+      if (voteWinner && voteWinnerMessage) {
+        const endMessage = `${resultMessage} ${voteWinnerMessage}`;
+        nextPhase = 'ended';
+        updateData.winner = voteWinner;
+        updateData.status = 'ended';
+        updateData.lastResultMessage = endMessage;
+        batch.set(logRef, {
+          type: 'gameEnd',
+          message: endMessage,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      } else {
+        updateData.lastResultMessage = resultMessage;
+        batch.set(logRef, {
+          type: 'voteResult',
+          message: resultMessage,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+      }
     } else if (currentPhase === 'voteResult') {
       // Check win condition with current player states
       const allPlayersSnap = await adminDb

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebaseAdmin';
-import { assignRoles } from '@/lib/gameLogic';
+import { assignRoles, checkWinCondition } from '@/lib/gameLogic';
 import { Player, RoomSettings } from '@/types/game';
 import { FieldValue } from 'firebase-admin/firestore';
 
@@ -69,18 +69,29 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    const winner = checkWinCondition(assignedPlayers);
+    const winnerMessage = winner === 'citizen'
+      ? '시민팀이 승리했습니다!'
+      : winner === 'mafia'
+      ? '마피아팀이 승리했습니다!'
+      : null;
+
     // Update room
     batch.update(roomRef, {
-      currentPhase: 'roleReveal',
-      status: 'playing',
+      currentPhase: winner ? 'ended' : 'roleReveal',
+      status: winner ? 'ended' : 'playing',
+      winner: winner ?? null,
+      lastResultMessage: winnerMessage,
       phaseStartedAt: FieldValue.serverTimestamp(),
     });
 
     // Add log
     const logRef = adminDb.collection('rooms').doc(roomId).collection('logs').doc();
     batch.set(logRef, {
-      type: 'gameStart',
-      message: `게임이 시작되었습니다. 참여자 ${players.length}명`,
+      type: winner ? 'gameEnd' : 'gameStart',
+      message: winnerMessage
+        ? `게임 시작 직후 ${winnerMessage}`
+        : `게임이 시작되었습니다. 참여자 ${players.length}명`,
       createdAt: FieldValue.serverTimestamp(),
     });
 

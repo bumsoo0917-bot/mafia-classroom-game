@@ -59,8 +59,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '해당 행동을 수행할 수 없는 역할입니다.' }, { status: 400 });
     }
 
-    if (actionType === 'mafiaKill' && dayNumber === 1) {
-      return NextResponse.json({ error: '첫날 밤에는 아직 마피아가 공격할 수 없습니다.' }, { status: 400 });
+    if (dayNumber === 1) {
+      return NextResponse.json({ error: '첫날 밤에는 아직 행동할 수 없습니다.' }, { status: 400 });
     }
 
     // Check for duplicate action

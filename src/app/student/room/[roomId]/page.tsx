@@ -271,7 +271,7 @@ export default function StudentRoomPage() {
           <div className="game-card bg-amber-500/20 border-amber-400 space-y-3">
             <p className="text-2xl font-black text-amber-200">마을에 수상한 밤이 찾아왔습니다</p>
             <p className="text-white/80 leading-relaxed">
-              평화롭던 교실 마을에 마피아가 숨어들었다는 소문이 퍼졌습니다. 시민들은 서로의 표정을 살피며,
+              평화롭던 {room.roomName} 마을에 마피아가 숨어들었다는 소문이 퍼졌습니다. 시민들은 서로의 표정을 살피며,
               날이 밝으면 모두 모여 누가 마피아인지 회의를 열기로 했습니다. 하지만 아직 첫 회의가 시작되기 전,
               마피아는 정체를 드러낼 수 없어 오늘 밤 아무도 공격하지 못합니다.
             </p>
@@ -310,12 +310,12 @@ export default function StudentRoomPage() {
               <p className="text-2xl font-bold text-white">밤입니다</p>
               <p className="text-white/60 text-lg">시민은 조용히 기다려 주세요</p>
             </div>
-          ) : myPlayer.role === 'mafia' && isFirstNight ? (
+          ) : isFirstNight ? (
             <div className="game-card text-center space-y-3 bg-red-500/20 border-red-400">
               <div className="text-5xl">🎭</div>
-              <p className="text-2xl font-bold text-red-200">첫날 밤에는 공격할 수 없습니다</p>
+              <p className="text-2xl font-bold text-red-200">첫날 밤에는 행동할 수 없습니다</p>
               <p className="text-white/70 text-lg">
-                아직 시민 회의가 시작되기 전입니다. 마피아는 오늘 밤 정체를 숨기고 조용히 기다립니다.
+                아직 시민 회의가 시작되기 전입니다. 모든 특수 역할은 오늘 밤 조용히 기다립니다.
               </p>
             </div>
           ) : hasSubmittedAction ? (
